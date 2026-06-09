@@ -57,8 +57,11 @@ for _r in _rooms_data:
         }
 
 # Load graph.json for routing edges only (ADJ).
-with open(os.path.join(BASE, "graph.json"), encoding="utf-8") as f:
-    GRAPH = json.load(f)
+try:
+    with open(os.path.join(BASE, "graph.json"), encoding="utf-8") as f:
+        GRAPH = json.load(f)
+except FileNotFoundError:
+    GRAPH = {"nodes": [], "edges": []}
 
 ADJ = {}
 for edge in GRAPH["edges"]:
@@ -342,8 +345,11 @@ def get_route2(from_room: str, to_room: str):
 from collections import defaultdict as _defdict2
 
 _c2_path = os.path.join(BASE, "corridor2.json")
-with open(_c2_path, encoding="utf-8") as _f:
-    C2 = json.load(_f)
+try:
+    with open(_c2_path, encoding="utf-8") as _f:
+        C2 = json.load(_f)
+except FileNotFoundError:
+    C2 = {"floors": {}, "stair_links": [], "cross_building_links": []}
 
 # Build adjacency
 _C2ADJ = _defdict2(list)
@@ -445,8 +451,11 @@ def get_route3(from_room: str, to_room: str):
 
 # ── Rasterized corridor routing ───────────────────────────────────────────────
 _c3_path = os.path.join(BASE, "corridor3.json")
-with open(_c3_path, encoding="utf-8") as _f:
-    C3 = json.load(_f)
+try:
+    with open(_c3_path, encoding="utf-8") as _f:
+        C3 = json.load(_f)
+except FileNotFoundError:
+    C3 = {"floors": {}, "stair_links": [], "cross_building_links": []}
 
 # Base adjacency: intra-floor edges + stair links (no cross-building links).
 # Used for same-building routes so the path never detours through the other building.
