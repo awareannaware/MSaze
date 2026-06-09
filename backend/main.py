@@ -166,7 +166,7 @@ def get_rooms(q:str=""):
         if q and q.lower() not in n["id"].lower() and q.lower() not in rt.lower(): continue
         floor_val = n.get("floor_num") or n.get("floor","")
         results.append({"id":n["id"],"type":rt,"building":n.get("building",""),"floor":floor_val,"floor_num":floor_val})
-    return results[:100]
+    return results
 
 @app.get("/api/rooms/{room_id}")
 def get_room(room_id:str):
