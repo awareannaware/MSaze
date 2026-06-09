@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.db
+data/
+backend copy/
+backend/corridor3.json
+backend/corridor2.json
+backend/corridor_graph.json
+backend/graph.json
+backend/nav_graph.json
+backend/door_validation.json
+backend/dxf_analysis.json
+memory/
