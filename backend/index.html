@@ -424,12 +424,13 @@ function drawMap() {
   }
   ctx.stroke();
 
-  // B22 walls — cool gray
+  // B22 walls — cool gray; shifted -15 X, +30 Y to align with B21
+  const B22_DX = -46, B22_DY = -29;
   ctx.strokeStyle = 'rgba(136,148,168,0.7)';
   ctx.beginPath();
   for (const w of wallsB22) {
-    const [sx,sy]=worldToScreen(w.start[0],w.start[1]);
-    const [ex,ey]=worldToScreen(w.end[0],w.end[1]);
+    const [sx,sy]=worldToScreen(w.start[0]+B22_DX, w.start[1]+B22_DY);
+    const [ex,ey]=worldToScreen(w.end[0]+B22_DX,   w.end[1]+B22_DY);
     ctx.moveTo(sx,sy); ctx.lineTo(ex,ey);
   }
   ctx.stroke();
