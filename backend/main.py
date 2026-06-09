@@ -772,6 +772,40 @@ for _e in _NG2["edges"]:
         _NG2_ELEV_NODES.add(_e["from"])
         _NG2_ELEV_NODES.add(_e["to"])
 
+# Auto-generate CROSS_BLD edges between CONNECTION nodes across buildings (in-memory only)
+_existing_ng2_edges: set = set()
+for _e in _NG2["edges"]:
+    _existing_ng2_edges.add((_e["from"], _e["to"]))
+    _existing_ng2_edges.add((_e["to"], _e["from"]))
+
+_conn_b21: dict = _defaultdict(list)  # floor → list of nodes
+_conn_b22: dict = _defaultdict(list)
+for _n in _NG2["nodes"]:
+    if _n.get("type") == "CONNECTION":
+        if _n["building"] == "21":
+            _conn_b21[_n["floor"]].append(_n)
+        elif _n["building"] == "22":
+            _conn_b22[_n["floor"]].append(_n)
+
+_CROSS_BLD_THRESHOLD = 500.0
+_cross_bld_added = 0
+for _floor in set(_conn_b21) & set(_conn_b22):
+    for _na in _conn_b21[_floor]:
+        for _nb in _conn_b22[_floor]:
+            _dist = _math.hypot(_na["x"] - _nb["x"], _na["y"] - _nb["y"])
+            if _dist <= _CROSS_BLD_THRESHOLD:
+                if (_na["id"], _nb["id"]) not in _existing_ng2_edges:
+                    _NG2_ADJ[_na["id"]].append((_nb["id"], _dist))
+                    _NG2_ADJ[_nb["id"]].append((_na["id"], _dist))
+                    _existing_ng2_edges.add((_na["id"], _nb["id"]))
+                    _existing_ng2_edges.add((_nb["id"], _na["id"]))
+                    _cross_bld_added += 1
+
+import logging as _logging
+_logging.getLogger(__name__).info(
+    "CROSS_BLD auto-edges added: %d (threshold=%g u)", _cross_bld_added, _CROSS_BLD_THRESHOLD
+)
+
 # Main connected component (BFS over full graph)
 _NG2_MAIN_COMP: set = set()
 _visited_mc: set = set()
