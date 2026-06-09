@@ -1,0 +1,345 @@
+{
+  "21_f1": {
+    "layer_etype_counts": [
+      [
+        "STRIP:LINE",
+        474
+      ],
+      [
+        "Beton:LINE",
+        174
+      ],
+      [
+        "Dim:DIMENSION",
+        151
+      ],
+      [
+        "STRIP:TEXT",
+        141
+      ],
+      [
+        "Mabat:LINE",
+        138
+      ],
+      [
+        "STRIP:ARC",
+        107
+      ],
+      [
+        "Beton:CIRCLE",
+        85
+      ],
+      [
+        "Beton:TEXT",
+        37
+      ],
+      [
+        "Beton:LWPOLYLINE",
+        35
+      ],
+      [
+        "TEXT:TEXT",
+        34
+      ],
+      [
+        "Dim:LINE",
+        26
+      ],
+      [
+        "Mabat:ARC",
+        26
+      ],
+      [
+        "STRIP:SOLID",
+        18
+      ],
+      [
+        "Beton:ARC",
+        16
+      ],
+      [
+        "Door:LWPOLYLINE",
+        14
+      ],
+      [
+        "Dim:TEXT",
+        13
+      ],
+      [
+        "STRIP:CIRCLE",
+        13
+      ],
+      [
+        "Mabat:TEXT",
+        12
+      ],
+      [
+        "gvul:TEXT",
+        10
+      ],
+      [
+        "ASHADE:INSERT",
+        9
+      ],
+      [
+        "STRIP:ELLIPSE",
+        9
+      ],
+      [
+        "AEROCONDITIONAL:INSERT",
+        8
+      ],
+      [
+        "Door:INSERT",
+        7
+      ],
+      [
+        "Up:LINE",
+        6
+      ],
+      [
+        "Up:TEXT",
+        6
+      ],
+      [
+        "Hatch:HATCH",
+        6
+      ],
+      [
+        "STRIP:POINT",
+        6
+      ],
+      [
+        "gvul:LINE",
+        5
+      ],
+      [
+        "TEXT:INSERT",
+        4
+      ],
+      [
+        "AEROCONDITIONAL:TEXT",
+        4
+      ]
+    ],
+    "room_texts": [
+      {
+        "text": "0021",
+        "x": 937.5,
+        "y": 4143.4,
+        "layer": "gvul"
+      },
+      {
+        "text": "0021",
+        "x": 1233.9,
+        "y": 2338.7,
+        "layer": "gvul"
+      },
+      {
+        "text": "0021",
+        "x": 1233.9,
+        "y": 79.0,
+        "layer": "gvul"
+      },
+      {
+        "text": "0021",
+        "x": 1233.9,
+        "y": 1269.2,
+        "layer": "gvul"
+      },
+      {
+        "text": "0022",
+        "x": 910.1,
+        "y": 4139.7,
+        "layer": "gvul"
+      },
+      {
+        "text": "0022",
+        "x": 1209.5,
+        "y": 2337.2,
+        "layer": "gvul"
+      },
+      {
+        "text": "0022",
+        "x": 1209.5,
+        "y": 77.5,
+        "layer": "gvul"
+      },
+      {
+        "text": "0022",
+        "x": 1209.5,
+        "y": 1267.7,
+        "layer": "gvul"
+      },
+      {
+        "text": "0202",
+        "x": 928.8,
+        "y": 5747.0,
+        "layer": "gvul"
+      },
+      {
+        "text": "0203",
+        "x": 892.4,
+        "y": 5748.5,
+        "layer": "gvul"
+      },
+      {
+        "text": "1150",
+        "x": 1102.2,
+        "y": 3612.4,
+        "layer": "TEXT_YASHAN"
+      },
+      {
+        "text": "1151",
+        "x": 768.4,
+        "y": 3433.3,
+        "layer": "TEXT_YASHAN"
+      },
+      {
+        "text": "1152",
+        "x": 1400.4,
+        "y": 3633.6,
+        "layer": "TEXT_YASHAN"
+      },
+      {
+        "text": "2003",
+        "x": 13594.5,
+        "y": 2890.8,
+        "layer": "STRIP"
+      },
+      {
+        "text": "2016",
+        "x": 13612.3,
+        "y": 2953.1,
+        "layer": "STRIP"
+      },
+      {
+        "text": "2203",
+        "x": 14104.6,
+        "y": 3284.6,
+        "layer": "TEXT_YASHAN"
+      }
+    ],
+    "all_texts": [
+      {
+        "text": "",
+        "x": -53346.6,
+        "y": -950.8,
+        "layer": "AEROCONDITIONAL"
+      },
+      {
+        "text": "",
+        "x": -46492.1,
+        "y": 2760.4,
+        "layer": "0"
+      },
+      {
+        "text": "",
+        "x": -44202.7,
+        "y": 2530.7,
+        "layer": "Dim"
+      },
+      {
+        "text": "",
+        "x": -47326.1,
+        "y": 5062.3,
+        "layer": "Dim"
+      },
+      {
+        "text": "",
+        "x": -54944.4,
+        "y": 4189.7,
+        "layer": "Dim"
+      },
+      {
+        "text": "",
+        "x": -54275.1,
+        "y": 3087.2,
+        "layer": "Dim"
+      },
+      {
+        "text": "",
+        "x": -53571.3,
+        "y": -612.6,
+        "layer": "Dim"
+      },
+      {
+        "text": "",
+        "x": -49749.5,
+        "y": -488.2,
+        "layer": "0"
+      },
+      {
+        "text": "",
+        "x": -48820.1,
+        "y": 4205.7,
+        "layer": "AEROCONDITIONAL"
+      },
+      {
+        "text": "",
+        "x": -49628.6,
+        "y": 1026.0,
+        "layer": "0"
+      },
+      {
+        "text": "",
+        "x": -51708.2,
+        "y": -322.5,
+        "layer": "Dim"
+      },
+      {
+        "text": "",
+        "x": -51576.1,
+        "y": 3432.2,
+        "layer": "Beton"
+      },
+      {
+        "text": "",
+        "x": -40390.5,
+        "y": 1082.6,
+        "layer": "Beton"
+      },
+      {
+        "text": "",
+        "x": -39960.3,
+        "y": 1014.4,
+        "layer": "Beton"
+      },
+      {
+        "text": "",
+        "x": -38803.1,
+        "y": 2197.2,
+        "layer": "Beton"
+      },
+      {
+        "text": "",
+        "x": -40139.3,
+        "y": 835.4,
+        "layer": "Beton"
+      },
+      {
+        "text": "",
+        "x": -39223.4,
+        "y": 4323.0,
+        "layer": "Beton"
+      },
+      {
+        "text": "",
+        "x": -38801.9,
+        "y": 4659.2,
+        "layer": "Beton"
+      },
+      {
+        "text": "",
+        "x": -40954.6,
+        "y": 855.1,
+        "layer": "0201Shetah-Neto"
+      },
+      {
+        "text": "",
+        "x": 3654.8,
+        "y": 773.5,
+        "layer": "TEXT"
+      },
+      {
+        "text": 

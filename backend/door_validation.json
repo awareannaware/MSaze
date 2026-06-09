@@ -1,0 +1,3280 @@
+{
+  "ok": [
+    {
+      "bldg": "21",
+      "floor": 1,
+      "rooms": [
+        "21150"
+      ],
+      "stored_door": [
+        1242.3,
+        3262.5
+      ],
+      "dxf_nearest_door": [
+        1229.1,
+        3240.0
+      ],
+      "distance_to_nearest_dxf_door": 26.1,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21134"
+      ],
+      "stored_door": [
+        3020.8,
+        3539.3
+      ],
+      "dxf_nearest_door": [
+        3039.3,
+        3531.9
+      ],
+      "distance_to_nearest_dxf_door": 19.9,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21203"
+      ],
+      "stored_door": [
+        2089.9,
+        1167.9
+      ],
+      "dxf_nearest_door": [
+        2084.6,
+        1187.4
+      ],
+      "distance_to_nearest_dxf_door": 20.2,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21207"
+      ],
+      "stored_door": [
+        5406.6,
+        2472.3
+      ],
+      "dxf_nearest_door": [
+        5392.8,
+        2484.8
+      ],
+      "distance_to_nearest_dxf_door": 18.6,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21212",
+        "21213",
+        "21248"
+      ],
+      "stored_door": [
+        1979.7,
+        3723.4
+      ],
+      "dxf_nearest_door": [
+        1998.8,
+        3705.7
+      ],
+      "distance_to_nearest_dxf_door": 26.0,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21148",
+        "21150"
+      ],
+      "stored_door": [
+        1311.6,
+        3459.5
+      ],
+      "dxf_nearest_door": [
+        1330.1,
+        3470.5
+      ],
+      "distance_to_nearest_dxf_door": 21.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21234",
+        "21316"
+      ],
+      "stored_door": [
+        3500.9,
+        3154.7
+      ],
+      "dxf_nearest_door": [
+        3524.6,
+        3160.6
+      ],
+      "distance_to_nearest_dxf_door": 24.4,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21236"
+      ],
+      "stored_door": [
+        5712.4,
+        2080.7
+      ],
+      "dxf_nearest_door": [
+        5725.3,
+        2064.8
+      ],
+      "distance_to_nearest_dxf_door": 20.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21301"
+      ],
+      "stored_door": [
+        4993.4,
+        4123.9
+      ],
+      "dxf_nearest_door": [
+        4968.2,
+        4117.4
+      ],
+      "distance_to_nearest_dxf_door": 26.1,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21302"
+      ],
+      "stored_door": [
+        4379.6,
+        4801.2
+      ],
+      "dxf_nearest_door": [
+        4402.1,
+        4788.2
+      ],
+      "distance_to_nearest_dxf_door": 26.0,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21303"
+      ],
+      "stored_door": [
+        3008.8,
+        4669.3
+      ],
+      "dxf_nearest_door": [
+        3000.6,
+        4695.4
+      ],
+      "distance_to_nearest_dxf_door": 27.4,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21305",
+        "21334"
+      ],
+      "stored_door": [
+        2509.9,
+        4732.5
+      ],
+      "dxf_nearest_door": [
+        2487.4,
+        4745.5
+      ],
+      "distance_to_nearest_dxf_door": 25.9,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21306"
+      ],
+      "stored_door": [
+        1947.0,
+        3054.3
+      ],
+      "dxf_nearest_door": [
+        1968.5,
+        3049.6
+      ],
+      "distance_to_nearest_dxf_door": 22.0,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21307",
+        "21308"
+      ],
+      "stored_door": [
+        2253.5,
+        2549.4
+      ],
+      "dxf_nearest_door": [
+        2252.7,
+        2551.1
+      ],
+      "distance_to_nearest_dxf_door": 1.9,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21309",
+        "21311"
+      ],
+      "stored_door": [
+        2681.2,
+        2156.6
+      ],
+      "dxf_nearest_door": [
+        2694.3,
+        2179.3
+      ],
+      "distance_to_nearest_dxf_door": 26.2,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21315"
+      ],
+      "stored_door": [
+        3429.2,
+        2913.3
+      ],
+      "dxf_nearest_door": [
+        3436.5,
+        2890.1
+      ],
+      "distance_to_nearest_dxf_door": 24.3,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21331"
+      ],
+      "stored_door": [
+        2059.4,
+        3416.0
+      ],
+      "dxf_nearest_door": [
+        2047.6,
+        3401.9
+      ],
+      "distance_to_nearest_dxf_door": 18.4,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21336"
+      ],
+      "stored_door": [
+        2541.2,
+        2396.9
+      ],
+      "dxf_nearest_door": [
+        2566.5,
+        2403.5
+      ],
+      "distance_to_nearest_dxf_door": 26.2,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "33140"
+      ],
+      "stored_door": [
+        1360.8,
+        2753.0
+      ],
+      "dxf_nearest_door": [
+        1349.6,
+        2769.8
+      ],
+      "distance_to_nearest_dxf_door": 20.2,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "33143"
+      ],
+      "stored_door": [
+        1085.2,
+        2748.8
+      ],
+      "dxf_nearest_door": [
+        1094.6,
+        2769.8
+      ],
+      "distance_to_nearest_dxf_door": 23.0,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21150",
+        "21248",
+        "21429",
+        "21430"
+      ],
+      "stored_door": [
+        1709.9,
+        3666.2
+      ],
+      "dxf_nearest_door": [
+        1717.3,
+        3641.3
+      ],
+      "distance_to_nearest_dxf_door": 25.9,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21400"
+      ],
+      "stored_door": [
+        949.6,
+        2828.7
+      ],
+      "dxf_nearest_door": [
+        949.6,
+        2828.7
+      ],
+      "distance_to_nearest_dxf_door": 0.0,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21402",
+        "21452"
+      ],
+      "stored_door": [
+        2138.4,
+        2769.5
+      ],
+      "dxf_nearest_door": [
+        2141.9,
+        2749.6
+      ],
+      "distance_to_nearest_dxf_door": 20.2,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21403",
+        "21404"
+      ],
+      "stored_door": [
+        2414.1,
+        2266.7
+      ],
+      "dxf_nearest_door": [
+        2438.9,
+        2273.7
+      ],
+      "distance_to_nearest_dxf_door": 25.8,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21418",
+        "21446"
+      ],
+      "stored_door": [
+        3351.0,
+        3636.4
+      ],
+      "dxf_nearest_door": [
+        3326.2,
+        3629.4
+      ],
+      "distance_to_nearest_dxf_door": 25.7,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21419"
+      ],
+      "stored_door": [
+        3186.6,
+        3795.2
+      ],
+      "dxf_nearest_door": [
+        3181.3,
+        3774.3
+      ],
+      "distance_to_nearest_dxf_door": 21.6,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21444"
+      ],
+      "stored_door": [
+        922.4,
+        3255.5
+      ],
+      "dxf_nearest_door": [
+        912.1,
+        3274.4
+      ],
+      "distance_to_nearest_dxf_door": 21.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21150",
+        "21544"
+      ],
+      "stored_door": [
+        922.4,
+        3255.5
+      ],
+      "dxf_nearest_door": [
+        912.1,
+        3274.4
+      ],
+      "distance_to_nearest_dxf_door": 21.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21248",
+        "21530",
+        "21531",
+        "21532",
+        "21533",
+        "21534"
+      ],
+      "stored_door": [
+        2173.8,
+        3793.7
+      ],
+      "dxf_nearest_door": [
+        2191.4,
+        3810.9
+      ],
+      "distance_to_nearest_dxf_door": 24.6,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21500"
+      ],
+      "stored_door": [
+        949.6,
+        2828.7
+      ],
+      "dxf_nearest_door": [
+        949.6,
+        2828.7
+      ],
+      "distance_to_nearest_dxf_door": 0.0,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21512",
+        "21513",
+        "21514",
+        "21515"
+      ],
+      "stored_door": [
+        3338.2,
+        2615.7
+      ],
+      "dxf_nearest_door": [
+        3329.4,
+        2607.0
+      ],
+      "distance_to_nearest_dxf_door": 12.4,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21606"
+      ],
+      "stored_door": [
+        3067.1,
+        2069.6
+      ],
+      "dxf_nearest_door": [
+        3047.5,
+        2063.2
+      ],
+      "distance_to_nearest_dxf_door": 20.6,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21607"
+      ],
+      "stored_door": [
+        2980.2,
+        2357.6
+      ],
+      "dxf_nearest_door": [
+        2986.7,
+        2377.0
+      ],
+      "distance_to_nearest_dxf_door": 20.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21610"
+      ],
+      "stored_door": [
+        3664.6,
+        3047.4
+      ],
+      "dxf_nearest_door": [
+        3645.0,
+        3040.9
+      ],
+      "distance_to_nearest_dxf_door": 20.6,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21611"
+      ],
+      "stored_door": [
+        3953.9,
+        2962.3
+      ],
+      "dxf_nearest_door": [
+        3960.4,
+        2981.7
+      ],
+      "distance_to_nearest_dxf_door": 20.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21620"
+      ],
+      "stored_door": [
+        2613.8,
+        4530.8
+      ],
+      "dxf_nearest_door": [
+        2594.4,
+        4537.2
+      ],
+      "distance_to_nearest_dxf_door": 20.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21621",
+        "21622"
+      ],
+      "stored_door": [
+        2491.1,
+        4566.0
+      ],
+      "dxf_nearest_door": [
+        2484.6,
+        4546.6
+      ],
+      "distance_to_nearest_dxf_door": 20.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21623"
+      ],
+      "stored_door": [
+        2558.6,
+        4123.1
+      ],
+      "dxf_nearest_door": [
+        2552.1,
+        4103.6
+      ],
+      "distance_to_nearest_dxf_door": 20.5,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21624",
+        "21654"
+      ],
+      "stored_door": [
+        2444.2,
+        3844.2
+      ],
+      "dxf_nearest_door": [
+        2434.0,
+        3866.0
+      ],
+      "distance_to_nearest_dxf_door": 24.1,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21649"
+      ],
+      "stored_door": [
+        1608.9,
+        3519.4
+      ],
+      "dxf_nearest_door": [
+        1608.8,
+        3489.6
+      ],
+      "distance_to_nearest_dxf_door": 29.9,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21652"
+      ],
+      "stored_door": [
+        1041.6,
+        2846.8
+      ],
+      "dxf_nearest_door": [
+        1051.1,
+        2870.4
+      ],
+      "distance_to_nearest_dxf_door": 25.4,
+      "status": "OK"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21653",
+        "21655"
+      ],
+      "stored_door": [
+        1504.0,
+        2621.1
+      ],
+      "dxf_nearest_door": [
+        1523.4,
+        2614.6
+      ],
+      "distance_to_nearest_dxf_door": 20.5,
+      "status": "OK"
+    }
+  ],
+  "warn": [
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21150"
+      ],
+      "stored_door": [
+        623.4,
+        3399.8
+      ],
+      "dxf_nearest_door": [
+        693.6,
+        3434.5
+      ],
+      "distance_to_nearest_dxf_door": 78.3,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21201",
+        "21233",
+        "21246"
+      ],
+      "stored_door": [
+        1819.5,
+        3269.1
+      ],
+      "dxf_nearest_door": [
+        1785.1,
+        3239.5
+      ],
+      "distance_to_nearest_dxf_door": 45.4,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21204",
+        "21205"
+      ],
+      "stored_door": [
+        3797.1,
+        1109.9
+      ],
+      "dxf_nearest_door": [
+        3780.4,
+        1079.9
+      ],
+      "distance_to_nearest_dxf_door": 34.3,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21206"
+      ],
+      "stored_door": [
+        4671.2,
+        1673.4
+      ],
+      "dxf_nearest_door": [
+        4704.3,
+        1682.8
+      ],
+      "distance_to_nearest_dxf_door": 34.4,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21208"
+      ],
+      "stored_door": [
+        4074.0,
+        2258.5
+      ],
+      "dxf_nearest_door": [
+        4106.9,
+        2248.5
+      ],
+      "distance_to_nearest_dxf_door": 34.4,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21209",
+        "21232"
+      ],
+      "stored_door": [
+        3784.3,
+        3375.7
+      ],
+      "dxf_nearest_door": [
+        3768.9,
+        3411.5
+      ],
+      "distance_to_nearest_dxf_door": 39.0,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21236",
+        "21237"
+      ],
+      "stored_door": [
+        4785.0,
+        2256.3
+      ],
+      "dxf_nearest_door": [
+        4829.0,
+        2218.1
+      ],
+      "distance_to_nearest_dxf_door": 58.3,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21300"
+      ],
+      "stored_door": [
+        1313.8,
+        3091.4
+      ],
+      "dxf_nearest_door": [
+        1364.1,
+        3098.4
+      ],
+      "distance_to_nearest_dxf_door": 50.8,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21304"
+      ],
+      "stored_door": [
+        2788.0,
+        4882.8
+      ],
+      "dxf_nearest_door": [
+        2794.7,
+        4920.3
+      ],
+      "distance_to_nearest_dxf_door": 38.1,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21310"
+      ],
+      "stored_door": [
+        2768.5,
+        1838.6
+      ],
+      "dxf_nearest_door": [
+        2829.2,
+        1836.9
+      ],
+      "distance_to_nearest_dxf_door": 60.7,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 3,
+      "rooms": [
+        "21313",
+        "21314"
+      ],
+      "stored_door": [
+        3319.2,
+        2567.5
+      ],
+      "dxf_nearest_door": [
+        3299.9,
+        2536.5
+      ],
+      "distance_to_nearest_dxf_door": 36.5,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21401"
+      ],
+      "stored_door": [
+        1922.5,
+        2996.3
+      ],
+      "dxf_nearest_door": [
+        1899.7,
+        2962.8
+      ],
+      "distance_to_nearest_dxf_door": 40.5,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21405",
+        "21406",
+        "21407"
+      ],
+      "stored_door": [
+        2842.1,
+        1959.1
+      ],
+      "dxf_nearest_door": [
+        2841.8,
+        1914.4
+      ],
+      "distance_to_nearest_dxf_door": 44.7,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21408",
+        "21409",
+        "21410",
+        "21411"
+      ],
+      "stored_door": [
+        3431.8,
+        2546.0
+      ],
+      "dxf_nearest_door": [
+        3456.7,
+        2527.8
+      ],
+      "distance_to_nearest_dxf_door": 30.9,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21412",
+        "21413",
+        "21414",
+        "21415",
+        "21416",
+        "21417"
+      ],
+      "stored_door": [
+        4022.5,
+        3211.1
+      ],
+      "dxf_nearest_door": [
+        4069.6,
+        3275.5
+      ],
+      "distance_to_nearest_dxf_door": 79.8,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21420",
+        "21421",
+        "21422",
+        "21423",
+        "21424",
+        "21425"
+      ],
+      "stored_door": [
+        2759.4,
+        4468.7
+      ],
+      "dxf_nearest_door": [
+        2694.4,
+        4516.1
+      ],
+      "distance_to_nearest_dxf_door": 80.4,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 4,
+      "rooms": [
+        "21426",
+        "21427",
+        "21428"
+      ],
+      "stored_door": [
+        2090.2,
+        3870.3
+      ],
+      "dxf_nearest_door": [
+        2066.7,
+        3889.9
+      ],
+      "distance_to_nearest_dxf_door": 30.6,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21501"
+      ],
+      "stored_door": [
+        1308.8,
+        2991.2
+      ],
+      "dxf_nearest_door": [
+        1289.6,
+        3027.4
+      ],
+      "distance_to_nearest_dxf_door": 40.9,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21502",
+        "21503",
+        "21504",
+        "21505"
+      ],
+      "stored_door": [
+        2097.9,
+        2539.8
+      ],
+      "dxf_nearest_door": [
+        2078.8,
+        2515.8
+      ],
+      "distance_to_nearest_dxf_door": 30.7,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21506",
+        "21507",
+        "21508",
+        "21509",
+        "21510",
+        "21511"
+      ],
+      "stored_door": [
+        2764.1,
+        1949.0
+      ],
+      "dxf_nearest_door": [
+        2829.1,
+        1901.6
+      ],
+      "distance_to_nearest_dxf_door": 80.4,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21516",
+        "21517",
+        "21518",
+        "21519",
+        "21520",
+        "21521"
+      ],
+      "stored_door": [
+        4022.5,
+        3211.1
+      ],
+      "dxf_nearest_door": [
+        4069.6,
+        3275.5
+      ],
+      "distance_to_nearest_dxf_door": 79.8,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21522",
+        "21523",
+        "21524",
+        "21525",
+        "21545"
+      ],
+      "stored_door": [
+        3425.0,
+        3878.5
+      ],
+      "dxf_nearest_door": [
+        3444.7,
+        3901.9
+      ],
+      "distance_to_nearest_dxf_door": 30.6,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 5,
+      "rooms": [
+        "21526",
+        "21527",
+        "21528",
+        "21529"
+      ],
+      "stored_door": [
+        2758.1,
+        4469.9
+      ],
+      "dxf_nearest_door": [
+        2694.4,
+        4516.1
+      ],
+      "distance_to_nearest_dxf_door": 78.7,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21150",
+        "21651"
+      ],
+      "stored_door": [
+        1468.0,
+        3567.4
+      ],
+      "dxf_nearest_door": [
+        1468.0,
+        3537.3
+      ],
+      "distance_to_nearest_dxf_door": 30.1,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21601"
+      ],
+      "stored_door": [
+        1710.5,
+        3257.1
+      ],
+      "dxf_nearest_door": [
+        1727.1,
+        3224.7
+      ],
+      "distance_to_nearest_dxf_door": 36.4,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21602",
+        "21603"
+      ],
+      "stored_door": [
+        2456.8,
+        2435.1
+      ],
+      "dxf_nearest_door": [
+        2507.6,
+        2397.6
+      ],
+      "distance_to_nearest_dxf_door": 63.1,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21604",
+        "21605"
+      ],
+      "stored_door": [
+        2833.1,
+        2061.9
+      ],
+      "dxf_nearest_door": [
+        2795.2,
+        2112.4
+      ],
+      "distance_to_nearest_dxf_door": 63.2,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21608",
+        "21609"
+      ],
+      "stored_door": [
+        3322.4,
+        2702.5
+      ],
+      "dxf_nearest_door": [
+        3359.8,
+        2753.4
+      ],
+      "distance_to_nearest_dxf_door": 63.2,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21612",
+        "21613"
+      ],
+      "stored_door": [
+        3958.9,
+        3197.1
+      ],
+      "dxf_nearest_door": [
+        3996.7,
+        3146.6
+      ],
+      "distance_to_nearest_dxf_door": 63.1,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21614",
+        "21615"
+      ],
+      "stored_door": [
+        3582.5,
+        3570.3
+      ],
+      "dxf_nearest_door": [
+        3620.4,
+        3519.8
+      ],
+      "distance_to_nearest_dxf_door": 63.2,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21616",
+        "21617"
+      ],
+      "stored_door": [
+        3206.2,
+        3943.5
+      ],
+      "dxf_nearest_door": [
+        3244.1,
+        3893.0
+      ],
+      "distance_to_nearest_dxf_door": 63.2,
+      "status": "WARN"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21618",
+        "21619"
+      ],
+      "stored_door": [
+        2829.9,
+        4316.7
+      ],
+      "dxf_nearest_door": [
+        2867.7,
+        4266.2
+      ],
+      "distance_to_nearest_dxf_door": 63.1,
+      "status": "WARN"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22227"
+      ],
+      "stored_door": [
+        484.8,
+        3320.2
+      ],
+      "dxf_nearest_door": [
+        528.8,
+        3231.7
+      ],
+      "distance_to_nearest_dxf_door": 98.8,
+      "status": "WARN"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22317"
+      ],
+      "stored_door": [
+        852.5,
+        3158.2
+      ],
+      "dxf_nearest_door": [
+        810.8,
+        3166.7
+      ],
+      "distance_to_nearest_dxf_door": 42.6,
+      "status": "WARN"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22418"
+      ],
+      "stored_door": [
+        852.5,
+        3318.2
+      ],
+      "dxf_nearest_door": [
+        816.8,
+        3269.2
+      ],
+      "distance_to_nearest_dxf_door": 60.6,
+      "status": "WARN"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22417"
+      ],
+      "stored_door": [
+        852.5,
+        3158.2
+      ],
+      "dxf_nearest_door": [
+        810.8,
+        3166.7
+      ],
+      "distance_to_nearest_dxf_door": 42.6,
+      "status": "WARN"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22517"
+      ],
+      "stored_door": [
+        849.5,
+        3320.2
+      ],
+      "dxf_nearest_door": [
+        816.8,
+        3269.2
+      ],
+      "distance_to_nearest_dxf_door": 60.6,
+      "status": "WARN"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22516"
+      ],
+      "stored_door": [
+        471.5,
+        2810.8
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 55.7,
+      "status": "WARN"
+    }
+  ],
+  "mismatch": [
+    {
+      "bldg": "21",
+      "floor": 2,
+      "rooms": [
+        "21202"
+      ],
+      "stored_door": [
+        1599.6,
+        2385.7
+      ],
+      "dxf_nearest_door": [
+        2126.1,
+        2193.5
+      ],
+      "distance_to_nearest_dxf_door": 560.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "21",
+      "floor": 6,
+      "rooms": [
+        "21648"
+      ],
+      "stored_door": [
+        1771.9,
+        4091.5
+      ],
+      "dxf_nearest_door": [
+        1608.8,
+        3489.6
+      ],
+      "distance_to_nearest_dxf_door": 623.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22208"
+      ],
+      "stored_door": [
+        392.1,
+        3812.9
+      ],
+      "dxf_nearest_door": [
+        256.3,
+        3882.9
+      ],
+      "distance_to_nearest_dxf_door": 152.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22206"
+      ],
+      "stored_door": [
+        750.1,
+        3810.4
+      ],
+      "dxf_nearest_door": [
+        879.3,
+        3744.7
+      ],
+      "distance_to_nearest_dxf_door": 144.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22210"
+      ],
+      "stored_door": [
+        -1274.7,
+        3802.9
+      ],
+      "dxf_nearest_door": [
+        163.0,
+        3882.9
+      ],
+      "distance_to_nearest_dxf_door": 1439.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22227"
+      ],
+      "stored_door": [
+        -1016.8,
+        3431.1
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3483.4
+      ],
+      "distance_to_nearest_dxf_door": 1170.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22221"
+      ],
+      "stored_door": [
+        -1359.7,
+        3503.4
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3483.4
+      ],
+      "distance_to_nearest_dxf_door": 1512.1,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22151",
+        "22150",
+        "22222"
+      ],
+      "stored_door": [
+        -1599.7,
+        3640.7
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3568.9
+      ],
+      "distance_to_nearest_dxf_door": 1753.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22207"
+      ],
+      "stored_door": [
+        422.8,
+        3495.2
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3483.4
+      ],
+      "distance_to_nearest_dxf_door": 270.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22201"
+      ],
+      "stored_door": [
+        -1398.2,
+        3381.9
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3483.4
+      ],
+      "distance_to_nearest_dxf_door": 1553.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22226",
+        "22202"
+      ],
+      "stored_door": [
+        -1011.7,
+        2927.2
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3483.4
+      ],
+      "distance_to_nearest_dxf_door": 1290.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22205"
+      ],
+      "stored_door": [
+        465.0,
+        2929.0
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3483.4
+      ],
+      "distance_to_nearest_dxf_door": 636.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22004"
+      ],
+      "stored_door": [
+        -139.0,
+        2079.9
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3483.4
+      ],
+      "distance_to_nearest_dxf_door": 1433.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 2,
+      "rooms": [
+        "22203"
+      ],
+      "stored_door": [
+        -697.6,
+        1375.9
+      ],
+      "dxf_nearest_door": [
+        152.2,
+        3483.4
+      ],
+      "distance_to_nearest_dxf_door": 2272.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22303"
+      ],
+      "stored_door": [
+        -383.1,
+        4978.7
+      ],
+      "dxf_nearest_door": [
+        369.8,
+        4836.2
+      ],
+      "distance_to_nearest_dxf_door": 766.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22304"
+      ],
+      "stored_door": [
+        -385.6,
+        4973.7
+      ],
+      "dxf_nearest_door": [
+        369.8,
+        4836.2
+      ],
+      "distance_to_nearest_dxf_door": 767.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22302"
+      ],
+      "stored_door": [
+        -152.6,
+        4973.7
+      ],
+      "dxf_nearest_door": [
+        369.8,
+        4836.2
+      ],
+      "distance_to_nearest_dxf_door": 540.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22301"
+      ],
+      "stored_door": [
+        265.1,
+        4526.5
+      ],
+      "dxf_nearest_door": [
+        369.8,
+        4836.2
+      ],
+      "distance_to_nearest_dxf_door": 326.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22333"
+      ],
+      "stored_door": [
+        -524.9,
+        4709.8
+      ],
+      "dxf_nearest_door": [
+        369.8,
+        4836.2
+      ],
+      "distance_to_nearest_dxf_door": 903.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22305"
+      ],
+      "stored_door": [
+        -808.7,
+        4515.7
+      ],
+      "dxf_nearest_door": [
+        369.8,
+        4836.2
+      ],
+      "distance_to_nearest_dxf_door": 1221.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22331"
+      ],
+      "stored_door": [
+        265.1,
+        4441.5
+      ],
+      "dxf_nearest_door": [
+        369.8,
+        4836.2
+      ],
+      "distance_to_nearest_dxf_door": 408.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22318",
+        "22319"
+      ],
+      "stored_door": [
+        823.0,
+        3369.2
+      ],
+      "dxf_nearest_door": [
+        816.8,
+        3269.2
+      ],
+      "distance_to_nearest_dxf_door": 100.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22151",
+        "22150",
+        "22338"
+      ],
+      "stored_door": [
+        -1607.9,
+        3602.2
+      ],
+      "dxf_nearest_door": [
+        173.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1812.7,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22340"
+      ],
+      "stored_door": [
+        -1805.8,
+        3056.7
+      ],
+      "dxf_nearest_door": [
+        173.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1990.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22308",
+        "22309"
+      ],
+      "stored_door": [
+        -952.5,
+        2544.1
+      ],
+      "dxf_nearest_door": [
+        173.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1339.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22334"
+      ],
+      "stored_door": [
+        138.2,
+        2605.6
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 455.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22307"
+      ],
+      "stored_door": [
+        -1682.8,
+        2713.7
+      ],
+      "dxf_nearest_door": [
+        173.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1937.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22306",
+        "22341"
+      ],
+      "stored_door": [
+        -1937.8,
+        2713.7
+      ],
+      "dxf_nearest_door": [
+        173.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 2183.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22316"
+      ],
+      "stored_door": [
+        198.3,
+        2665.7
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 375.1,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22310"
+      ],
+      "stored_door": [
+        -916.8,
+        2440.5
+      ],
+      "dxf_nearest_door": [
+        173.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1369.1,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22315"
+      ],
+      "stored_door": [
+        -129.3,
+        2030.2
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1034.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22311"
+      ],
+      "stored_door": [
+        -403.8,
+        2023.3
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1234.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22312"
+      ],
+      "stored_door": [
+        -410.9,
+        2003.9
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1252.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22314"
+      ],
+      "stored_door": [
+        -131.2,
+        2003.1
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1056.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 3,
+      "rooms": [
+        "22313"
+      ],
+      "stored_door": [
+        -263.0,
+        1871.3
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1242.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22424"
+      ],
+      "stored_door": [
+        -278.2,
+        4605.2
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1273.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22423"
+      ],
+      "stored_door": [
+        -263.0,
+        4605.2
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1268.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22422"
+      ],
+      "stored_door": [
+        -130.3,
+        4472.5
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1100.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22425",
+        "22426"
+      ],
+      "stored_door": [
+        -410.9,
+        4472.5
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1209.7,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22421"
+      ],
+      "stored_door": [
+        -137.4,
+        4453.2
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1084.1,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22428"
+      ],
+      "stored_door": [
+        -893.5,
+        3991.4
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1216.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22427"
+      ],
+      "stored_door": [
+        -881.1,
+        3991.8
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1206.1,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22429"
+      ],
+      "stored_door": [
+        -1025.7,
+        3859.2
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1283.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22420"
+      ],
+      "stored_door": [
+        215.8,
+        3704.3
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 290.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22430"
+      ],
+      "stored_door": [
+        -1026.1,
+        3846.8
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1279.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22431"
+      ],
+      "stored_door": [
+        -1603.2,
+        3654.2
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1797.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22151",
+        "22150",
+        "22444"
+      ],
+      "stored_door": [
+        -1607.9,
+        3602.2
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3416.2
+      ],
+      "distance_to_nearest_dxf_door": 1796.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22454"
+      ],
+      "stored_door": [
+        -1805.8,
+        3056.7
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1995.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22403"
+      ],
+      "stored_door": [
+        -1393.8,
+        3158.2
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1576.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22416"
+      ],
+      "stored_door": [
+        484.1,
+        2628.9
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 197.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22404",
+        "22405"
+      ],
+      "stored_door": [
+        -991.0,
+        2582.6
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1355.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22402"
+      ],
+      "stored_door": [
+        -1682.8,
+        2713.7
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1942.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22401",
+        "22341"
+      ],
+      "stored_door": [
+        -1937.8,
+        2713.7
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 2188.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22415"
+      ],
+      "stored_door": [
+        483.8,
+        2616.6
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 209.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22413"
+      ],
+      "stored_door": [
+        339.9,
+        2484.7
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 389.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22414"
+      ],
+      "stored_door": [
+        351.5,
+        2484.3
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 383.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22406"
+      ],
+      "stored_door": [
+        -930.9,
+        2522.5
+      ],
+      "dxf_nearest_door": [
+        178.8,
+        3268.2
+      ],
+      "distance_to_nearest_dxf_door": 1337.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22412"
+      ],
+      "stored_door": [
+        -137.4,
+        2023.3
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1044.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22407"
+      ],
+      "stored_door": [
+        -403.8,
+        2023.3
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1234.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22411"
+      ],
+      "stored_door": [
+        -130.3,
+        2003.9
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1055.1,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22408"
+      ],
+      "stored_door": [
+        -410.9,
+        2003.9
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1252.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22410"
+      ],
+      "stored_door": [
+        -263.0,
+        1871.3
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1242.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 4,
+      "rooms": [
+        "22409"
+      ],
+      "stored_door": [
+        -278.2,
+        1871.3
+      ],
+      "dxf_nearest_door": [
+        541.2,
+        2817.7
+      ],
+      "distance_to_nearest_dxf_door": 1251.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22523"
+      ],
+      "stored_door": [
+        -263.0,
+        4605.2
+      ],
+      "dxf_nearest_door": [
+        172.8,
+        3418.2
+      ],
+      "distance_to_nearest_dxf_door": 1264.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22524"
+      ],
+      "stored_door": [
+        -278.2,
+        4605.2
+      ],
+      "dxf_nearest_door": [
+        172.8,
+        3418.2
+      ],
+      "distance_to_nearest_dxf_door": 1269.7,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22525"
+      ],
+      "stored_door": [
+        -410.9,
+        4472.5
+      ],
+      "dxf_nearest_door": [
+        172.8,
+        3418.2
+      ],
+      "distance_to_nearest_dxf_door": 1205.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22522"
+      ],
+      "stored_door": [
+        -1749.3,
+        3165.2
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1926.7,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22526"
+      ],
+      "stored_door": [
+        -409.4,
+        4458.9
+      ],
+      "dxf_nearest_door": [
+        172.8,
+        3418.2
+      ],
+      "distance_to_nearest_dxf_door": 1192.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22521"
+      ],
+      "stored_door": [
+        -133.2,
+        4458.9
+      ],
+      "dxf_nearest_door": [
+        172.8,
+        3418.2
+      ],
+      "distance_to_nearest_dxf_door": 1084.7,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22520"
+      ],
+      "stored_door": [
+        333.5,
+        3991.8
+      ],
+      "dxf_nearest_door": [
+        257.8,
+        3418.2
+      ],
+      "distance_to_nearest_dxf_door": 578.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22519"
+      ],
+      "stored_door": [
+        409.5,
+        3937.7
+      ],
+      "dxf_nearest_door": [
+        872.3,
+        3706.2
+      ],
+      "distance_to_nearest_dxf_door": 517.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22527"
+      ],
+      "stored_door": [
+        -777.4,
+        3768.3
+      ],
+      "dxf_nearest_door": [
+        172.8,
+        3418.2
+      ],
+      "distance_to_nearest_dxf_door": 1012.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22518"
+      ],
+      "stored_door": [
+        479.3,
+        3846.0
+      ],
+      "dxf_nearest_door": [
+        872.3,
+        3706.2
+      ],
+      "distance_to_nearest_dxf_door": 417.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22151",
+        "22150"
+      ],
+      "stored_door": [
+        -1607.9,
+        3602.2
+      ],
+      "dxf_nearest_door": [
+        172.8,
+        3418.2
+      ],
+      "distance_to_nearest_dxf_door": 1790.1,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22528"
+      ],
+      "stored_door": [
+        -1393.8,
+        3320.2
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1569.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22542"
+      ],
+      "stored_door": [
+        -1841.8,
+        3170.2
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 2018.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22544"
+      ],
+      "stored_door": [
+        -1308.3,
+        3164.2
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1486.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22503"
+      ],
+      "stored_door": [
+        -1390.8,
+        3158.2
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1569.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22504"
+      ],
+      "stored_door": [
+        -1022.2,
+        2632.2
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1354.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22502"
+      ],
+      "stored_door": [
+        -1666.8,
+        2718.8
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1921.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22501",
+        "22341"
+      ],
+      "stored_door": [
+        -1953.8,
+        2721.3
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 2197.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22505"
+      ],
+      "stored_door": [
+        -1022.2,
+        2620.8
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1359.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22514"
+      ],
+      "stored_door": [
+        75.2,
+        2543.2
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 531.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22515"
+      ],
+      "stored_door": [
+        155.8,
+        2486.6
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 501.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22506"
+      ],
+      "stored_door": [
+        -952.5,
+        2542.7
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1339.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22507"
+      ],
+      "stored_door": [
+        -875.9,
+        2485.8
+      ],
+      "dxf_nearest_door": [
+        174.8,
+        3266.2
+      ],
+      "distance_to_nearest_dxf_door": 1308.8,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22513"
+      ],
+      "stored_door": [
+        -132.5,
+        2016.9
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 1042.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22508"
+      ],
+      "stored_door": [
+        -409.4,
+        2017.6
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 1235.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22509"
+      ],
+      "stored_door": [
+        -410.9,
+        2003.9
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 1245.4,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22512"
+      ],
+      "stored_door": [
+        -130.3,
+        2003.9
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 1050.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22511"
+      ],
+      "stored_door": [
+        -263.0,
+        1871.3
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 1237.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 5,
+      "rooms": [
+        "22510"
+      ],
+      "stored_door": [
+        -340.4,
+        1925.0
+      ],
+      "dxf_nearest_door": [
+        525.2,
+        2825.3
+      ],
+      "distance_to_nearest_dxf_door": 1249.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22605"
+      ],
+      "stored_door": [
+        -339.6,
+        4771.8
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 1730.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22606"
+      ],
+      "stored_door": [
+        -1205.3,
+        4188.1
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 1885.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22151",
+        "22150",
+        "22607"
+      ],
+      "stored_door": [
+        -1464.3,
+        3511.9
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 1895.7,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22604"
+      ],
+      "stored_door": [
+        409.3,
+        3894.7
+      ],
+      "dxf_nearest_door": [
+        1014.7,
+        3615.9
+      ],
+      "distance_to_nearest_dxf_door": 666.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22654"
+      ],
+      "stored_door": [
+        -567.9,
+        3871.6
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 1177.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22650"
+      ],
+      "stored_door": [
+        -1802.0,
+        3097.7
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 2212.3,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22652"
+      ],
+      "stored_door": [
+        -1841.3,
+        3096.2
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 2251.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22601"
+      ],
+      "stored_door": [
+        -1651.9,
+        2960.0
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 2074.6,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22602"
+      ],
+      "stored_door": [
+        -1231.4,
+        3232.5
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 1638.9,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22653"
+      ],
+      "stored_door": [
+        -1651.6,
+        2896.1
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 2083.0,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22651"
+      ],
+      "stored_door": [
+        -2024.5,
+        2866.4
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 2456.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "23605"
+      ],
+      "stored_door": [
+        -2240.6,
+        2706.6
+      ],
+      "dxf_nearest_door": [
+        407.4,
+        3211.2
+      ],
+      "distance_to_nearest_dxf_door": 2695.7,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22603"
+      ],
+      "stored_door": [
+        137.3,
+        2747.1
+      ],
+      "dxf_nearest_door": [
+        455.2,
+        2812.4
+      ],
+      "distance_to_nearest_dxf_door": 324.5,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "22341"
+      ],
+      "stored_door": [
+        -1960.9,
+        2710.8
+      ],
+      "dxf_nearest_door": [
+        455.2,
+        2812.4
+      ],
+      "distance_to_nearest_dxf_door": 2418.2,
+      "status": "MISMATCH"
+    },
+    {
+      "bldg": "22",
+      "floor": 6,
+      "rooms": [
+        "21342"
+      ],
+      "stored_door": [
+        1208.7,
+        2232.4
+      ],
+      "dxf_nearest_door": [
+        828.2,
+        2814.1
+      ],
+      "distance_to_nearest_dxf_door": 695.1,
+      "status": "MISMATCH"
+    }
+  ]
+}

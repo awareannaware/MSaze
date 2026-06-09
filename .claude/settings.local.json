@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"http://localhost:8001/api/route4?from_room=21402&to_room=21502\")",
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s \"http://localhost:8001/api/route4?from_room=21204&to_room=21209\")",
+      "Bash(uvicorn main:app --port 8001)",
+      "Bash(curl -s http://localhost:8001/health)",
+      "Bash(curl -s \"http://localhost:8001/api/route4?from_room=21402&to_room=21201\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('floor_changes:', d['floor_changes'], 'num_corridors:', d['num_corridors'], 'steps:', len\\(d['steps']\\), 'first_step:', d['steps'][0]['text'][:60], 'last_step:', d['steps'][-1]['text'][:60]\\)\")",
+      "Bash(curl -s \"http://localhost:8001/api/rooms?q=stairwell\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('stairwell results:', len\\(d\\)\\); print\\(d[:3] if d else 'none'\\)\")",
+      "Bash(curl -s \"http://localhost:8001/api/rooms?q=21402\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('room result:', d\\)\")",
+      "Bash(python3)",
+      "Bash(pip install *)",
+      "Bash(python3 -c \"import main; print\\('import ok'\\)\")",
+      "Bash(python3 scripts/build_nav_graph.py)",
+      "Bash(curl -s \"http://localhost:8001/health\")",
+      "Bash(curl -s \"http://localhost:8001/api/route5?from_room=21201&to_room=21401\")",
+      "Bash(curl -s \"http://localhost:8001/api/route5?from_room=21301&to_room=22401\")",
+      "Bash(curl -s \"http://localhost:8001/api/route5?from_room=21101&to_room=22201\")",
+      "Bash(curl -s \"http://localhost:8001/api/route5?from_room=21301&to_room=21312\")",
+      "Bash(curl -s \"http://localhost:8001/api/route5?from_room=21301&to_room=22201\")",
+      "Bash(curl -s \"http://localhost:8001/api/route5?from_room=21301&to_room=21305\")",
+      "Bash(curl -s \"http://localhost:8001/api/route5?from_room=21201&to_room=21601\")",
+      "Bash(python3 -c \"import ezdxf; print\\('ezdxf ok'\\)\")",
+      "Bash(python3 -c \"import matplotlib; print\\('matplotlib ok'\\)\")",
+      "Bash(pip3 install *)",
+      "Bash(git -C /Users/annasy/Desktop/home/claude/campus-nav log --oneline -5)"
+    ]
+  }
+}

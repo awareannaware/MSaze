@@ -1,0 +1,794 @@
+"""
+Campus Navigation API  —  English version
+Run:  uvicorn main:app --reload
+Test: http://localhost:8000/health
+"""
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+import json, heapq, os, sqlite3, hashlib, math
+from collections import defaultdict as _defaultdict
+
+app = FastAPI(title="Campus Navigation API")
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+BASE = os.path.dirname(__file__)
+
+_DB = os.path.join(BASE, "analytics.db")
+def _init_analytics():
+    with sqlite3.connect(_DB) as c:
+        c.execute("""CREATE TABLE IF NOT EXISTS searches(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            from_room TEXT, to_room TEXT,
+            from_floor INTEGER, to_floor INTEGER,
+            from_building TEXT, to_building TEXT,
+            floor_changes INTEGER,
+            ts TEXT DEFAULT (datetime('now','localtime')),
+            ip_hash TEXT
+        )""")
+_init_analytics()
+
+def _log_search(from_room, to_room, floor_changes, ip=""):
+    try:
+        fr=NODES.get(from_room,{}); tr=NODES.get(to_room,{})
+        with sqlite3.connect(_DB) as c:
+            c.execute("INSERT INTO searches(from_room,to_room,from_floor,to_floor,from_building,to_building,floor_changes,ip_hash) VALUES(?,?,?,?,?,?,?,?)",
+                (from_room,to_room,fr.get("floor"),tr.get("floor"),fr.get("building"),tr.get("building"),floor_changes,hashlib.md5(ip.encode()).hexdigest()[:8]))
+    except Exception as e:
+        print(f"analytics err: {e}")
+
+with open(os.path.join(BASE, "graph.json"), encoding="utf-8") as f:
+    GRAPH = json.load(f)
+
+# Keep the FIRST occurrence of each room ID (matches /api/rooms deduplication).
+# Stairwells (e.g. 21150) appear on every floor; we want the lowest-floor instance
+# so the NODES floor matches what the autocomplete shows the user.
+NODES: dict = {}
+for _n in GRAPH["nodes"]:
+    if _n["id"] not in NODES:
+        NODES[_n["id"]] = _n
+ADJ   = {}
+for edge in GRAPH["edges"]:
+    ADJ.setdefault(edge["from"], []).append((edge["to"],   edge["weight"], edge["type"]))
+    ADJ.setdefault(edge["to"],   []).append((edge["from"], edge["weight"], edge["type"]))
+
+TYPE_EN = {
+    "כיתת לימוד": "Classroom", "כיתת סמינר": "Seminar Room",
+    "משרד": "Office", "חדר חוקרים": "Researchers Room",
+    "חדר מדרגות": "Stairwell", "פיר מעלית": "Elevator Shaft",
+    "מעלית": "Elevator", "שירותים": "Restrooms", "מעבדה": "Lab",
+    "פויאה": "Foyer", "מבוא": "Entrance", "מחסן": "Storage",
+    "פרוזדור": "Corridor", "מעבר": "Passage", "שרותי נכים": "Accessible Restrooms",
+    "חדר עוזרים": "Assistants Room", "חדר מחשבים": "Computer Room",
+}
+
+def type_en(t): 
+    for heb, eng in TYPE_EN.items():
+        if heb in t: return eng
+    return t
+
+# מעברים אסורים בין קומות: כל זוג (קומה_א, קומה_ב) שאין ביניהן גישה ישירה.
+# הפורמט: frozenset כדי שהכיוון לא משנה (4↔2 אותו הדבר כמו 2↔4).
+FORBIDDEN_FLOOR_JUMPS = {
+    frozenset({4, 2}),  # אין מעבר ישיר בין קומה 4 ל-2 — חייבים לעבור דרך 3
+    frozenset({4, 1}),  # אין מעבר ישיר בין קומה 4 ל-1
+    frozenset({5, 1}),  # אין מעבר ישיר בין קומה 5 ל-1
+    frozenset({5, 2}),  # אין מעבר ישיר בין קומה 5 ל-2
+    frozenset({6, 1}),
+    frozenset({6, 2}),
+    frozenset({6, 3}),
+}
+
+def _floor_jump_allowed(u_id, v_id):
+    """מחזיר True אם המעבר בין שני חדרים מותר מבחינת קומות."""
+    u_node = NODES.get(u_id, {}); v_node = NODES.get(v_id, {})
+    u_floor = u_node.get("floor_num") or u_node.get("floor")
+    v_floor = v_node.get("floor_num") or v_node.get("floor")
+    if u_floor is None or v_floor is None: return True          # אין מידע — מאפשרים
+    if u_floor == v_floor: return True                           # אותה קומה — תמיד בסדר
+    try:
+        pair = frozenset({int(u_floor), int(v_floor)})
+    except (ValueError, TypeError):
+        return True
+    return pair not in FORBIDDEN_FLOOR_JUMPS
+
+def dijkstra(start, end):
+    dist={start:0}; prev={}; pq=[(0,start)]
+    while pq:
+        d,u = heapq.heappop(pq)
+        if d > dist.get(u, float("inf")): continue
+        if u == end: break
+        for v,w,et in ADJ.get(u,[]):
+            # דלג על מעברים אסורים בין קומות
+            if et in ("stairs", "elevator") and not _floor_jump_allowed(u, v):
+                continue
+            nd = d+w
+            if nd < dist.get(v, float("inf")):
+                dist[v]=nd; prev[v]=(u,et); heapq.heappush(pq,(nd,v))
+    if end not in dist: return None, None
+    path=[]; cur=end
+    while cur in prev: path.append(cur); cur=prev[cur][0]
+    path.append(start); path.reverse()
+    etypes=[]
+    for i in range(len(path)-1):
+        for v,w,et in ADJ.get(path[i],[]):
+            if v==path[i+1]: etypes.append(et); break
+    return path, etypes
+
+def instructions(path, etypes):
+    if not path: return []
+    steps=[]
+    n=NODES.get(path[0],{}); rt=type_en(n.get("type",""))
+    steps.append({"text": f"Start at Room {path[0]}" + (f" ({rt})" if rt else ""), "type":"start","room":path[0]})
+    for i,et in enumerate(etypes):
+        nxt=path[i+1]; n=NODES.get(nxt,{}); rt=type_en(n.get("type","")); fn=n.get("floor_num",""); b=n.get("building","")
+        if et=="horizontal":
+            steps.append({"text": f"Go to Room {nxt}" + (f" ({rt})" if rt else "") + (f" — Building {b}" if b else ""), "type":"walk","room":nxt})
+        elif et=="stairs":
+            steps.append({"text": f"Take the stairs to Floor {fn}", "type":"stairs","room":nxt})
+        elif et=="elevator":
+            steps.append({"text": f"Take the elevator to Floor {fn}", "type":"elevator","room":nxt})
+    n=NODES.get(path[-1],{}); rt=type_en(n.get("type",""))
+    steps.append({"text": f"You have arrived! Room {path[-1]}" + (f" ({rt})" if rt else ""), "type":"arrived","room":path[-1]})
+    return steps
+
+@app.get("/health")
+def health():
+    return {"status":"ok","rooms":len(NODES),"edges":len(GRAPH["edges"])}
+
+STAIR_TYPES = ("מדרגות", "מעלית", "פיר")
+
+@app.get("/api/rooms")
+def get_rooms(q:str=""):
+    seen=set(); results=[]
+    for n in GRAPH["nodes"]:
+        if n["id"] in seen: continue
+        seen.add(n["id"])
+        raw_type = n.get("type","")
+        if any(s in raw_type for s in STAIR_TYPES): continue
+        rt=type_en(raw_type)
+        if q and q.lower() not in n["id"].lower() and q.lower() not in rt.lower(): continue
+        floor_val = n.get("floor_num") or n.get("floor","")
+        results.append({"id":n["id"],"type":rt,"building":n.get("building",""),"floor":floor_val,"floor_num":floor_val})
+    return results[:100]
+
+@app.get("/api/rooms/{room_id}")
+def get_room(room_id:str):
+    n=NODES.get(room_id)
+    if not n: raise HTTPException(404,f"Room {room_id} not found")
+    return {**n,"type_en":type_en(n.get("type",""))}
+
+@app.get("/api/route")
+def get_route(from_room:str, to_room:str):
+    if from_room not in NODES: raise HTTPException(404,f"Room '{from_room}' not found")
+    if to_room   not in NODES: raise HTTPException(404,f"Room '{to_room}' not found")
+    if from_room==to_room:
+        return {"path":[from_room],"steps":[{"text":"You are already here!","type":"arrived","room":from_room}],"num_steps":0}
+    path,etypes=dijkstra(from_room,to_room)
+    if path is None: raise HTTPException(404,"No route found between these rooms")
+    return {"path":path,"steps":instructions(path,etypes),"num_steps":len(path)-1,
+            "from":{"id":from_room,**NODES.get(from_room,{})},"to":{"id":to_room,**NODES.get(to_room,{})}}
+
+@app.get("/api/floors/{floor_num}/rooms")
+def get_floor_rooms(floor_num:int):
+    rooms=[{**n,"type_en":type_en(n.get("type",""))} for n in GRAPH["nodes"] if n.get("floor_num")==floor_num]
+    if not rooms: raise HTTPException(404,f"Floor {floor_num} not found")
+    return {"floor":floor_num,"rooms":rooms}
+
+
+# ── Serve frontend ────────────────────────────────────────────────────────────
+from fastapi.responses import HTMLResponse
+
+@app.get("/", response_class=HTMLResponse)
+def serve_frontend():
+    html_path = os.path.join(BASE, "index.html")
+    if os.path.exists(html_path):
+        with open(html_path, encoding="utf-8") as f:
+            return f.read()
+    return HTMLResponse("<h1>Frontend not found — place index.html next to main.py</h1>", 404)
+
+
+# ── Map data endpoint ─────────────────────────────────────────────────────────
+import math as _math
+
+@app.get("/api/map/{floor_num}")
+def get_map(floor_num: int):
+    """Returns rooms + corridor lines for a given floor."""
+    floor_nodes = [n for n in GRAPH["nodes"] if n.get("floor") == floor_num]
+    if not floor_nodes:
+        raise HTTPException(404, f"Floor {floor_num} not found")
+
+    corridors = []
+    seen = set()
+    for e in GRAPH["edges"]:
+        if e["type"] != "horizontal":
+            continue
+        a = NODES.get(e["from"])
+        b = NODES.get(e["to"])
+        if not a or not b:
+            continue
+        if a.get("floor") != floor_num or b.get("floor") != floor_num:
+            continue
+        key = tuple(sorted([e["from"], e["to"]]))
+        if key in seen:
+            continue
+        seen.add(key)
+        corridors.append({
+            "x1": a["door_x"], "y1": a["door_y"],
+            "x2": b["door_x"], "y2": b["door_y"],
+            "from": e["from"], "to": e["to"]
+        })
+
+    all_x = [n["door_x"] for n in floor_nodes] + [n["x"] for n in floor_nodes]
+    all_y = [n["door_y"] for n in floor_nodes] + [n["y"] for n in floor_nodes]
+
+    rooms_out = []
+    for n in floor_nodes:
+        rooms_out.append({**n, "type_en": type_en(n.get("type", ""))})
+
+    return {
+        "floor":     floor_num,
+        "rooms":     rooms_out,
+        "corridors": corridors,
+        "bounds": {
+            "x_min": min(all_x) - 200,
+            "x_max": max(all_x) + 200,
+            "y_min": min(all_y) - 200,
+            "y_max": max(all_y) + 200,
+        }
+    }
+
+
+# ── Floor wall geometry endpoint ──────────────────────────────────────────────
+_floor_walls_path = os.path.join(BASE, "floor_walls.json")
+print(f"[startup] BASE={BASE}")
+print(f"[startup] floor_walls path={_floor_walls_path}, exists={os.path.exists(_floor_walls_path)}")
+with open(_floor_walls_path, encoding="utf-8") as _f:
+    FLOOR_WALLS = json.load(_f)
+print(f"[startup] FLOOR_WALLS keys={list(FLOOR_WALLS.keys())}")
+
+@app.get("/api/floormap/{floor_num}")
+def get_floormap(floor_num: int):
+    """Returns real wall geometry from DXF for a floor."""
+    data = FLOOR_WALLS.get(str(floor_num))
+    if data is None:
+        raise HTTPException(404, f"Floor {floor_num} not found in floor_walls.json")
+
+    floor_nodes = [
+        {**n, "type_en": type_en(n.get("type", ""))}
+        for n in GRAPH["nodes"] if n.get("floor") == floor_num
+    ]
+
+    walls_b21 = data.get("b21", [])
+    walls_b22 = data.get("b22", [])
+    all_walls  = walls_b21 + walls_b22
+
+    # Build bounds from walls; fallback to node coordinates if walls are empty
+    if all_walls:
+        all_x = [l["start"][0] for l in all_walls] + [l["end"][0] for l in all_walls]
+        all_y = [l["start"][1] for l in all_walls] + [l["end"][1] for l in all_walls]
+    elif floor_nodes:
+        all_x = [n["door_x"] for n in floor_nodes if "door_x" in n] + [n.get("x",0) for n in floor_nodes]
+        all_y = [n["door_y"] for n in floor_nodes if "door_y" in n] + [n.get("y",0) for n in floor_nodes]
+    else:
+        all_x = []; all_y = []
+
+    return {
+        "floor":     floor_num,
+        "rooms":     floor_nodes,
+        "walls_b21": walls_b21,
+        "walls_b22": walls_b22,
+        "bounds": {
+            "x_min": min(all_x) - 100 if all_x else -2500,
+            "x_max": max(all_x) + 100 if all_x else 6800,
+            "y_min": min(all_y) - 100 if all_y else 1000,
+            "y_max": max(all_y) + 100 if all_y else 6200,
+        }
+    }
+@app.get("/api/route2")
+def get_route2(from_room: str, to_room: str):
+    """Corridor-based routing: room → corridor → corridor → room"""
+    if from_room not in NODES: raise HTTPException(404, f"Room '{from_room}' not found")
+    if to_room   not in NODES: raise HTTPException(404, f"Room '{to_room}' not found")
+    if from_room == to_room:
+        return {"path":[],"corridor_path":[],"steps":[{"text":"You are already here!","type":"arrived","room":from_room}],"num_steps":0}
+
+    start_cn = _room_to_cnode(from_room)
+    end_cn   = _room_to_cnode(to_room)
+    if not start_cn: raise HTTPException(404, f"Room '{from_room}' not mapped to corridor")
+    if not end_cn:   raise HTTPException(404, f"Room '{to_room}' not mapped to corridor")
+
+    cpath = _dijkstra_corridor(start_cn, end_cn)
+    if cpath is None: raise HTTPException(404, "No corridor route found")
+
+    # Enrich corridor path with coordinates
+    corridor_coords = [
+        {"id": cn, "x": _CNODE_MAP[cn]["x"], "y": _CNODE_MAP[cn]["y"],
+         "floor": _CNODE_MAP[cn]["floor"], "rooms": _CNODE_MAP[cn].get("rooms",[])}
+        for cn in cpath if cn in _CNODE_MAP
+    ]
+
+    # Count floor changes
+    floors_seen = []
+    for cn in cpath:
+        f = _CNODE_MAP.get(cn,{}).get("floor")
+        if f and (not floors_seen or floors_seen[-1]!=f):
+            floors_seen.append(f)
+
+    return {
+        "from_room":      from_room,
+        "to_room":        to_room,
+        "corridor_path":  corridor_coords,
+        "num_corridors":  len(cpath),
+        "floor_changes":  len(floors_seen)-1,
+        "steps":          _build_corridor_instructions(from_room, to_room, cpath),
+    }
+
+
+# ── Polygon-based corridor routing ───────────────────────────────────────────
+from collections import defaultdict as _defdict2
+
+_c2_path = os.path.join(BASE, "corridor2.json")
+with open(_c2_path, encoding="utf-8") as _f:
+    C2 = json.load(_f)
+
+# Build adjacency
+_C2ADJ = _defdict2(list)
+for _key, _data in C2["floors"].items():
+    _bldg, _fl = _key.split("_"); _fl = int(_fl)
+    for _e in _data["edges"]:
+        _a = (_bldg, _fl, _e["from"])
+        _b = (_bldg, _fl, _e["to"])
+        _C2ADJ[_a].append((_b, _e["dist"]))
+        _C2ADJ[_b].append((_a, _e["dist"]))
+
+for _sl in C2["stair_links"]:
+    _a = tuple(_sl["from"]); _b = tuple(_sl["to"])
+    _C2ADJ[_a].append((_b, _sl["cost"]))
+    _C2ADJ[_b].append((_a, _sl["cost"]))
+
+for _cl in C2.get("cross_building_links", []):
+    _a = tuple(_cl["from"]); _b = tuple(_cl["to"])
+    _C2ADJ[_a].append((_b, _cl["cost"]))
+    _C2ADJ[_b].append((_a, _cl["cost"]))
+
+def _get_room_cpt(room_id):
+    n = NODES.get(room_id)
+    if not n: return None
+    key = f"{n.get('building','21')}_{n.get('floor','')}"
+    idx = C2["floors"].get(key, {}).get("room_to_cpt", {}).get(room_id)
+    if idx is None: return None
+    return (n.get("building","21"), n.get("floor", 0), idx)
+
+def _dijkstra_c2(start, end):
+    dist = {start: 0}; prev = {}; pq = [(0, start)]
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d > dist.get(u, float("inf")): continue
+        if u == end: break
+        for v, w in _C2ADJ.get(u, []):
+            nd = d + w
+            if nd < dist.get(v, float("inf")):
+                dist[v] = nd; prev[v] = u
+                heapq.heappush(pq, (nd, v))
+    if end not in dist: return None
+    path = []; cur = end
+    while cur in prev: path.append(cur); cur = prev[cur]
+    path.append(start); path.reverse()
+    return path
+
+@app.get("/api/route3")
+def get_route3(from_room: str, to_room: str):
+    """Corridor-polygon-based routing through actual corridor space."""
+    if from_room not in NODES: raise HTTPException(404, f"Room '{from_room}' not found")
+    if to_room   not in NODES: raise HTTPException(404, f"Room '{to_room}' not found")
+    if from_room == to_room:
+        return {"corridor_path": [], "steps": [{"text":"You are already here!","type":"arrived","room":from_room}], "num_corridors": 0}
+
+    start = _get_room_cpt(from_room)
+    end   = _get_room_cpt(to_room)
+    if not start: raise HTTPException(404, f"No corridor point for '{from_room}'")
+    if not end:   raise HTTPException(404, f"No corridor point for '{to_room}'")
+
+    path = _dijkstra_c2(start, end)
+    if path is None: raise HTTPException(404, "No corridor route found")
+
+    # Build coordinate path
+    corridor_coords = []
+    prev_floor = None
+    for bldg, floor, idx in path:
+        key = f"{bldg}_{floor}"
+        pts = C2["floors"].get(key, {}).get("pts", [])
+        if idx < len(pts):
+            px, py = pts[idx]
+            corridor_coords.append({"x": px, "y": py, "floor": floor, "building": bldg})
+
+    # Count floor changes
+    floors_seq = []
+    for c in corridor_coords:
+        if not floors_seq or floors_seq[-1] != c["floor"]:
+            floors_seq.append(c["floor"])
+    floor_changes = len(floors_seq) - 1
+
+    # Build steps
+    fr_node = NODES.get(from_room, {}); tr_node = NODES.get(to_room, {})
+    steps = [{"text": f"Start at Room {from_room}" + (f" ({type_en(fr_node.get('type',''))})" if fr_node.get('type') else ""), "type":"start","room":from_room}]
+    prev_f = fr_node.get("floor")
+    for c in corridor_coords:
+        if c["floor"] != prev_f:
+            direction = "up" if c["floor"] > prev_f else "down"
+            steps.append({"text": f"Take stairs {direction} to Floor {c['floor']}", "type":"stairs","room":None,"floor":c["floor"]})
+            prev_f = c["floor"]
+    steps.append({"text": f"You have arrived! Room {to_room}" + (f" ({type_en(tr_node.get('type',''))})" if tr_node.get('type') else ""), "type":"arrived","room":to_room})
+
+    return {
+        "from_room": from_room, "to_room": to_room,
+        "corridor_path": corridor_coords,
+        "num_corridors": len(corridor_coords),
+        "floor_changes": floor_changes,
+        "steps": steps
+    }
+
+
+# ── Rasterized corridor routing ───────────────────────────────────────────────
+_c3_path = os.path.join(BASE, "corridor3.json")
+with open(_c3_path, encoding="utf-8") as _f:
+    C3 = json.load(_f)
+
+# Base adjacency: intra-floor edges + stair links (no cross-building links).
+# Used for same-building routes so the path never detours through the other building.
+_C3ADJ_SAME = _defaultdict(list)
+for _key, _data in C3["floors"].items():
+    _bldg, _fl = _key.split("_"); _fl = int(_fl)
+    for _e in _data["edges"]:
+        _a = (_bldg, _fl, _e["from"]); _b = (_bldg, _fl, _e["to"])
+        _C3ADJ_SAME[_a].append((_b, _e["dist"]))
+        _C3ADJ_SAME[_b].append((_a, _e["dist"]))
+for _sl in C3["stair_links"]:
+    _a=tuple(_sl["from"]); _b=tuple(_sl["to"])
+    _C3ADJ_SAME[_a].append((_b, _sl["cost"]))
+    _C3ADJ_SAME[_b].append((_a, _sl["cost"]))
+
+# Add the missing stair link for building 22 floor 1 → floor 2.
+# 22_1 stairwell (22150/22151) maps to cpt_idx 702; 22_2 maps to cpt_idx 597.
+_missing_stair_a = ("22", 1, 702); _missing_stair_b = ("22", 2, 597)
+_C3ADJ_SAME[_missing_stair_a].append((_missing_stair_b, 600))
+_C3ADJ_SAME[_missing_stair_b].append((_missing_stair_a, 600))
+
+# Cross-building adjacency: same as above plus ONE cheapest cross-building link
+# per from-node (avoids the full 113 k Cartesian product while keeping connectivity).
+_C3ADJ_CROSS = _defaultdict(list, {k: list(v) for k, v in _C3ADJ_SAME.items()})
+_min_cross: dict = {}  # exposed for /api/debug/route; from-node → (to-node, cost)
+for _cl in C3.get("cross_building_links", []):
+    _a = tuple(_cl["from"]); _b = tuple(_cl["to"])
+    if _a not in _min_cross or _cl["cost"] < _min_cross[_a][1]:
+        _min_cross[_a] = (_b, _cl["cost"])
+    if _b not in _min_cross or _cl["cost"] < _min_cross[_b][1]:
+        _min_cross[_b] = (_a, _cl["cost"])
+for _a, (_b, _cost) in _min_cross.items():
+    _C3ADJ_CROSS[_a].append((_b, _cost))
+    _C3ADJ_CROSS[_b].append((_a, _cost))
+
+# ── Stairwell direct-access shortcuts ─────────────────────────────────────────
+# The rasterised corridor graph sometimes routes to a stairwell via a large loop
+# through the stairwell lobby (a big open area with few walls).  We add explicit
+# short-cut edges from the nearest main-corridor node to each stairwell transition
+# node so Dijkstra prefers the direct path over the lobby loop.
+#
+# How each shortcut was derived:
+#   1. Inspect C3["floors"][key]["pts"][stair_idx] for the stairwell coord.
+#   2. Find the nearest corridor node on the same floor that sits on the main
+#      corridor grid (within the "direct reach" strip of the stairwell door).
+#   3. Measure the straight-line distance → that becomes the shortcut cost.
+#
+# (bldg, floor, from_idx) ↔ (bldg, floor, to_idx), cost
+_STAIR_SHORTCUTS = [
+    # Floor 4 bldg21: stairwell #1824 (1660,3800) ↔ main corridor pt #473 (1660,3320)
+    # Bypasses the lobby loop that previously went through the open stairwell area.
+    (("21", 4, 1824), ("21", 4, 473), 480),
+    # Floor 5 bldg21: stairwell #2022 (940,3240) already well-connected; add safety
+    (("21", 5, 2022), ("21", 5, 406), 320),
+    # Floor 5 bldg21: stairwell #1221 (2140,3800) ↔ nearest pt #898 (2140,3320)
+    (("21", 5, 1221), ("21", 5, 898), 480),
+    # Floor 6 bldg21: stairwell #1658 (1420,3560) ↔ nearest pt #390 (1420,3080)
+    (("21", 6, 1658), ("21", 6, 390), 480),
+]
+for _sa, _sb, _sc in _STAIR_SHORTCUTS:
+    for _adj2 in [_C3ADJ_SAME, _C3ADJ_CROSS]:
+        _adj2[_sa].append((_sb, _sc))
+        _adj2[_sb].append((_sa, _sc))
+
+# Keep backward-compat alias (used by /api/route3 and tests)
+_C3ADJ = _C3ADJ_SAME
+
+def _get_c3_node(room_id, floor_hint=None):
+    """Return (building, floor, cpt_idx) for a room.
+
+    floor_hint: if given, used instead of NODES lookup — needed for stairwell
+    rooms whose ID appears on multiple floors (NODES dict keeps only last one).
+    """
+    n = NODES.get(room_id)
+    if not n: return None
+    bldg = n.get("building", "21")
+    # If caller supplies a floor override (e.g. for a stairwell), honour it.
+    floor = floor_hint if floor_hint is not None else n.get("floor", "")
+    key = f"{bldg}_{floor}"
+    idx = C3["floors"].get(key, {}).get("room_to_cpt", {}).get(room_id)
+    if idx is None: return None
+    return (bldg, int(floor), int(idx))
+
+def _directional_steps(from_room, to_room, corridor_coords):
+    """Generate turn-by-turn walking directions from corridor path."""
+    if not corridor_coords:
+        return []
+    fr_n = NODES.get(from_room, {}); tr_n = NODES.get(to_room, {})
+
+    # Group by floor
+    segs = []
+    for pt in corridor_coords:
+        if not segs or segs[-1]["floor"] != pt["floor"]:
+            segs.append({"floor": pt["floor"], "pts": []})
+        segs[-1]["pts"].append(pt)
+
+    # Room lookup per floor (exclude stairwells)
+    STAIR_T = ("מדרגות", "מעלית", "פיר")
+    by_floor = {}
+    for n in GRAPH["nodes"]:
+        fl = n.get("floor")
+        if fl not in by_floor: by_floor[fl] = []
+        if not any(t in n.get("type","") for t in STAIR_T):
+            by_floor[fl].append(n)
+
+    def heading(dx, dy):  # degrees, 0=east, 90=north
+        return math.degrees(math.atan2(dy, dx)) % 360
+
+    def cardinal(deg):
+        names = ["east","north-east","north","north-west","west","south-west","south","south-east"]
+        return names[round(deg/45) % 8]
+
+    def rooms_near_segment(start_pt, end_pt, floor):
+        sx,sy = start_pt["x"],start_pt["y"]; ex,ey = end_pt["x"],end_pt["y"]
+        seg2 = (ex-sx)**2+(ey-sy)**2
+        if seg2 < 1: return []
+        near=[]
+        for r in by_floor.get(floor,[]):
+            rx,ry = r.get("door_x",r.get("x",0)), r.get("door_y",r.get("y",0))
+            t = max(0,min(1,((rx-sx)*(ex-sx)+(ry-sy)*(ey-sy))/seg2))
+            d = math.hypot(rx-(sx+t*(ex-sx)), ry-(sy+t*(ey-sy)))
+            if d < 250: near.append((d, r["id"]))
+        near.sort(); return [r for _,r in near if r not in (from_room,to_room)][:3]
+
+    steps = [{"text": f"Start at Room {from_room}" + (f" ({type_en(fr_n.get('type',''))})" if fr_n.get('type') else ""), "type":"start","room":from_room}]
+
+    for si, seg in enumerate(segs):
+        pts = seg["pts"]; floor = seg["floor"]
+        if len(pts) < 2: continue
+
+        # Initial direction
+        dx = pts[1]["x"]-pts[0]["x"]; dy = pts[1]["y"]-pts[0]["y"]
+        hd = heading(dx, dy)
+        dir_word = "Continue" if si > 0 else "Head"
+        near = rooms_near_segment(pts[0], pts[min(6,len(pts)-1)], floor)
+        room_txt = f", passing rooms {', '.join(near)}" if near else ""
+        steps.append({"text": f"{dir_word} {cardinal(hd)}{room_txt}", "type":"walk","room":None,"floor":floor})
+
+        # Detect significant turns (> 35 deg) along simplified waypoints
+        sparse = pts[::5] + [pts[-1]]
+        for i in range(1, len(sparse)-1):
+            p=sparse[i-1]; c=sparse[i]; n=sparse[i+1]
+            if p["floor"]!=c["floor"] or c["floor"]!=n["floor"]: continue
+            dx1=c["x"]-p["x"]; dy1=c["y"]-p["y"]
+            dx2=n["x"]-c["x"]; dy2=n["y"]-c["y"]
+            cross=dx1*dy2-dy1*dx2
+            dot=dx1*dx2+dy1*dy2
+            mag=max(1,(dx1**2+dy1**2)**0.5*(dx2**2+dy2**2)**0.5)
+            ang=math.degrees(math.acos(max(-1,min(1,dot/mag))))
+            if ang < 35: continue
+            turn = "right" if cross < 0 else "left"
+            nd=heading(dx2,dy2)
+            near_t=rooms_near_segment(c,n,floor)
+            rt=f", passing rooms {', '.join(near_t)}" if near_t else ""
+            steps.append({"text":f"Turn {turn} ({cardinal(nd)}){rt}","type":"walk","room":None,"floor":floor})
+
+        # Floor change to next segment
+        if si < len(segs)-1:
+            nf=segs[si+1]["floor"]
+            ud="up" if nf>floor else "down"
+            steps.append({"text":f"Take stairs {ud} to Floor {nf}","type":"stairs","room":None,"floor":nf})
+
+    to_type=type_en(tr_n.get("type",""))
+    steps.append({"text": f"You have arrived at Room {to_room}" + (f" ({to_type})" if to_type else ""), "type":"arrived","room":to_room})
+    return steps
+
+
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "campus-admin-2024")
+
+@app.get("/api/admin/stats")
+def admin_stats(token: str = ""):
+    if token != ADMIN_TOKEN:
+        raise HTTPException(403, "Invalid token")
+    with sqlite3.connect(_DB) as c:
+        total = c.execute("SELECT COUNT(*) FROM searches").fetchone()[0]
+        top_routes = c.execute("""SELECT from_room,to_room,COUNT(*) as cnt FROM searches
+            GROUP BY from_room,to_room ORDER BY cnt DESC LIMIT 20""").fetchall()
+        by_floor = c.execute("""SELECT from_floor,to_floor,COUNT(*) as cnt FROM searches
+            WHERE from_floor IS NOT NULL GROUP BY from_floor,to_floor ORDER BY cnt DESC LIMIT 10""").fetchall()
+        recent = c.execute("""SELECT from_room,to_room,ts,floor_changes FROM searches
+            ORDER BY id DESC LIMIT 50""").fetchall()
+    return {
+        "total_searches": total,
+        "top_routes": [{"from":r[0],"to":r[1],"count":r[2]} for r in top_routes],
+        "by_floor": [{"from_floor":r[0],"to_floor":r[1],"count":r[2]} for r in by_floor],
+        "recent": [{"from":r[0],"to":r[1],"ts":r[2],"floor_changes":r[3]} for r in recent],
+    }
+
+
+@app.get("/api/route4")
+def get_route4(from_room: str, to_room: str, request: Request):
+    """Rasterized-corridor routing — stays inside walkable space."""
+    if from_room not in NODES: raise HTTPException(404, f"Room '{from_room}' not found")
+    if to_room   not in NODES: raise HTTPException(404, f"Room '{to_room}' not found")
+    if from_room == to_room:
+        return {"corridor_path":[],"steps":[{"text":"You are already here!","type":"arrived","room":from_room}],"num_corridors":0}
+
+    fr_n = NODES.get(from_room, {}); tr_n = NODES.get(to_room, {})
+    from_bldg = fr_n.get("building", "21")
+    to_bldg   = tr_n.get("building", "21")
+
+    # Use cross-building adjacency only when the two rooms are in different buildings.
+    # Same-building routes must never detour through the other building.
+    adj = _C3ADJ_CROSS if from_bldg != to_bldg else _C3ADJ_SAME
+
+    start = _get_c3_node(from_room)
+    end   = _get_c3_node(to_room)
+    if not start: raise HTTPException(404, f"No corridor point for '{from_room}'")
+    if not end:   raise HTTPException(404, f"No corridor point for '{to_room}'")
+
+    dist={start:0}; prev={}; pq=[(0,start)]
+    while pq:
+        d,u=heapq.heappop(pq)
+        if d>dist.get(u,float("inf")): continue
+        if u==end: break
+        for v,w in adj.get(u,[]):
+            nd=d+w
+            if nd<dist.get(v,float("inf")):
+                dist[v]=nd; prev[v]=u; heapq.heappush(pq,(nd,v))
+
+    if end not in dist: raise HTTPException(404,"No corridor route found")
+
+    path=[]; cur=end
+    while cur in prev: path.append(cur); cur=prev[cur]
+    path.append(start); path.reverse()
+    # fr_n / tr_n already set above
+
+    raw_coords = []
+    for bldg, floor, idx in path:
+        pts = C3["floors"].get(f"{bldg}_{floor}", {}).get("pts", [])
+        if int(idx) < len(pts):
+            px, py = pts[int(idx)]
+            raw_coords.append({"x": px, "y": py, "floor": floor, "building": bldg})
+
+    # עדכן את נקודת ההתחלה והסוף לפי NODES לדיוק מוחלט — use door_x first to avoid going through walls
+    if raw_coords:
+        start_x = fr_n.get("door_x") or fr_n.get("x")
+        start_y = fr_n.get("door_y") or fr_n.get("y")
+        if start_x is not None and start_y is not None:
+            raw_coords[0]["x"] = start_x
+            raw_coords[0]["y"] = start_y
+        end_x = tr_n.get("door_x") or tr_n.get("x")
+        end_y = tr_n.get("door_y") or tr_n.get("y")
+        if end_x is not None and end_y is not None:
+            raw_coords[-1]["x"] = end_x
+            raw_coords[-1]["y"] = end_y
+
+    # --- תיקון 3: בנה corridor_coords עם "תחנת עצירה" בכל מעבר קומה ---
+    # כל נקודת מעבר קומה מקבלת דגל is_floor_change=True כדי שה-frontend
+    # ידע להציג אותה כיעד-ביניים (מדרגות) ולא להמשיך את הקו לקומה הבאה.
+    corridor_coords = []
+    for i, c in enumerate(raw_coords):
+        entry = dict(c)
+        if i > 0 and raw_coords[i - 1]["floor"] != c["floor"]:
+            # הנקודה הזו היא הנקודה הראשונה בקומה החדשה — סמן breakpoint
+            corridor_coords[-1]["is_floor_change"] = True  # נקודת הסיום של הקומה הקודמת
+            entry["is_floor_start"] = True                 # נקודת ההתחלה בקומה החדשה
+        corridor_coords.append(entry)
+
+    floors_seq = []; prev_f = None
+    for c in corridor_coords:
+        if c["floor"] != prev_f: floors_seq.append(c["floor"]); prev_f = c["floor"]
+    floor_changes = len(floors_seq) - 1
+
+    # Smooth path: remove collinear intermediate points
+    # but limit max jump distance to avoid cutting through walls visually
+    def smooth(coords, tol=80, max_jump=450):
+        if len(coords)<=2: return coords
+        result=[coords[0]]
+        for i in range(1,len(coords)-1):
+            p=result[-1]; c=coords[i]; n=coords[i+1]
+            if p["floor"]!=c["floor"] or c["floor"]!=n["floor"]:
+                result.append(c); continue
+            # Don't skip if the jump from prev to next is too large
+            import math as _m
+            jump=_m.sqrt((n["x"]-p["x"])**2+(n["y"]-p["y"])**2)
+            if jump>max_jump:
+                result.append(c); continue
+            dx1=c["x"]-p["x"]; dy1=c["y"]-p["y"]
+            dx2=n["x"]-c["x"]; dy2=n["y"]-c["y"]
+            cross=abs(dx1*dy2-dy1*dx2)
+            length=max(1,(dx1**2+dy1**2)**0.5)
+            if cross/length>tol: result.append(c)
+        result.append(coords[-1])
+        return result
+
+    corridor_coords = smooth(corridor_coords)
+
+    steps = _directional_steps(from_room, to_room, corridor_coords)
+    _log_search(from_room, to_room, floor_changes, request.client.host if request.client else "")
+
+    return {"from_room":from_room,"to_room":to_room,
+            "corridor_path":corridor_coords,
+            "num_corridors":len(corridor_coords),
+            "floor_changes":floor_changes,"steps":steps,
+            "adj_used": "cross_building" if from_bldg != to_bldg else "same_building"}
+
+
+@app.get("/api/debug/route")
+def debug_route(from_room: str, to_room: str):
+    """Debug endpoint: reports graph connectivity stats for a route request."""
+    result: dict = {}
+
+    # Room lookup
+    fr_n = NODES.get(from_room); tr_n = NODES.get(to_room)
+    result["from_room"] = {"id": from_room, "found": fr_n is not None,
+                           "building": (fr_n or {}).get("building"), "floor": (fr_n or {}).get("floor")}
+    result["to_room"]   = {"id": to_room,   "found": tr_n is not None,
+                           "building": (tr_n or {}).get("building"), "floor": (tr_n or {}).get("floor")}
+
+    # Corridor node
+    s = _get_c3_node(from_room); e = _get_c3_node(to_room)
+    result["from_cpt"] = s; result["to_cpt"] = e
+
+    # Adjacency stats
+    from_bldg = (fr_n or {}).get("building","21"); to_bldg = (tr_n or {}).get("building","21")
+    adj = _C3ADJ_CROSS if from_bldg != to_bldg else _C3ADJ_SAME
+    result["adj_used"] = "cross_building" if from_bldg != to_bldg else "same_building"
+    result["adj_from_neighbors"] = len(adj.get(s, [])) if s else 0
+    result["adj_to_neighbors"]   = len(adj.get(e, [])) if e else 0
+
+    # Run Dijkstra and report
+    if s and e:
+        dist = {s: 0}; prev = {}; pq = [(0, s)]
+        while pq:
+            d, u = heapq.heappop(pq)
+            if d > dist.get(u, float("inf")): continue
+            if u == e: break
+            for v, w in adj.get(u, []):
+                nd = d + w
+                if nd < dist.get(v, float("inf")):
+                    dist[v] = nd; prev[v] = u; heapq.heappush(pq, (nd, v))
+        if e in dist:
+            path = []; cur = e
+            while cur in prev: path.append(cur); cur = prev[cur]
+            path.append(s); path.reverse()
+            buildings_in_path = sorted(set(p[0] for p in path))
+            floors_in_path    = [f for i,f in enumerate(p[1] for p in path)
+                                   if i==0 or list(p[1] for p in path)[i-1]!=f]
+            result["route_found"]      = True
+            result["total_cost"]       = dist[e]
+            result["num_pts"]          = len(path)
+            result["buildings_in_path"] = buildings_in_path
+            result["floor_sequence"]   = list(dict.fromkeys(p[1] for p in path))
+            result["crosses_buildings"] = len(buildings_in_path) > 1
+        else:
+            result["route_found"] = False
+
+    # Duplicate node IDs
+    from collections import Counter
+    id_counts = Counter(n["id"] for n in GRAPH["nodes"])
+    dups = {k: v for k, v in id_counts.items() if v > 1}
+    result["duplicate_ids_in_graph"] = list(dups.keys())
+
+    # Stair link summary
+    result["stair_links_count"] = len(C3["stair_links"])
+    result["cross_bridge_links_count"] = len(_min_cross)
+
+    return result
