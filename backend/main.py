@@ -552,13 +552,13 @@ def _directional_steps(from_room, to_room, corridor_coords):
             segs.append({"floor": pt["floor"], "pts": []})
         segs[-1]["pts"].append(pt)
 
-    # Room lookup per floor (exclude stairwells)
-    STAIR_T = ("מדרגות", "מעלית", "פיר")
+    # Room lookup per floor — only meaningful destination rooms (no circulation/utility)
+    SKIP_T = ("מדרגות", "מעלית", "פיר", "פרוזדור", "מעבר", "מבוא", "פויאה", "פויה", "מרפסת", "שירותים", "שרותי נכים", "מחסן")
     by_floor = {}
     for n in GRAPH["nodes"]:
         fl = n.get("floor")
         if fl not in by_floor: by_floor[fl] = []
-        if not any(t in n.get("type","") for t in STAIR_T):
+        if not any(t in n.get("type","") for t in SKIP_T) and n.get("type",""):
             by_floor[fl].append(n)
 
     def heading(dx, dy):  # degrees, 0=east, 90=north
@@ -591,7 +591,7 @@ def _directional_steps(from_room, to_room, corridor_coords):
             hd = heading(dx, dy)
             dir_word = "Continue" if si > 0 else "Head"
             near = rooms_near_segment(pts[0], pts[min(6,len(pts)-1)], floor)
-            room_txt = f", passing rooms {', '.join(near)}" if near else ""
+            room_txt = f", past rooms {', '.join(near)}" if near else ""
             steps.append({"text": f"{dir_word} {cardinal(hd)}{room_txt}", "type":"walk","room":None,"floor":floor})
 
             # Detect significant turns (> 35 deg) along simplified waypoints
@@ -609,7 +609,7 @@ def _directional_steps(from_room, to_room, corridor_coords):
                 turn = "right" if cross < 0 else "left"
                 nd=heading(dx2,dy2)
                 near_t=rooms_near_segment(c,n,floor)
-                rt=f", passing rooms {', '.join(near_t)}" if near_t else ""
+                rt=f", past rooms {', '.join(near_t)}" if near_t else ""
                 steps.append({"text":f"Turn {turn} ({cardinal(nd)}){rt}","type":"walk","room":None,"floor":floor})
 
         # Floor change to next segment

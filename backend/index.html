@@ -6,19 +6,19 @@
 <title>MSaze — Campus Navigation</title>
 <style>
 :root{
-  --bg:#f0ede8;--surface:#ffffff;--surface2:#f5f5f5;--border:#e0dbd4;
-  --accent:#1a73e8;--accent2:#00b96b;--warn:#f5a623;--danger:#e53935;
-  --text:#1a1a2e;--muted:#7a7a8a;--subtle:#b0aaa0;
-  --wall21:#b8b0a4;--wall22:#a8b8c8;
-  --route:#1a73e8;--route-glow:rgba(26,115,232,0.25);
-  --start:#f5a623;--end:#e53935;--stairs:#7c4dff;
-  --shadow:0 2px 12px rgba(0,0,0,0.12);--shadow-lg:0 8px 32px rgba(0,0,0,0.16);
+  --bg:#F9F3EF;--surface:#ffffff;--surface2:#f5f0ec;--border:#D2C1B6;
+  --accent:#1B3C53;--accent2:#456882;--warn:#c27c3a;--danger:#b94040;
+  --text:#1B3C53;--muted:#456882;--subtle:#D2C1B6;
+  --wall21:#9a8f84;--wall22:#7a8fa0;
+  --route:#1B3C53;--route-glow:rgba(27,60,83,0.22);
+  --start:#c27c3a;--end:#b94040;--stairs:#456882;
+  --shadow:0 2px 12px rgba(27,60,83,0.12);--shadow-lg:0 8px 32px rgba(27,60,83,0.16);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
 
 /* ── Onboarding ── */
-#onboarding{position:fixed;inset:0;background:linear-gradient(135deg,#1a73e8 0%,#0d47a1 100%);z-index:1000;display:flex;align-items:center;justify-content:center}
+#onboarding{position:fixed;inset:0;background:linear-gradient(135deg,#1B3C53 0%,#0d2535 100%);z-index:1000;display:flex;align-items:center;justify-content:center}
 #onboarding.hidden{display:none}
 .ob-card{background:#fff;border-radius:20px;padding:36px 28px;width:340px;max-width:90vw;text-align:center;box-shadow:var(--shadow-lg)}
 .ob-logo{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:2px;letter-spacing:-1px}
@@ -30,10 +30,10 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .ob-roles{display:flex;gap:8px;margin-bottom:24px}
 .ob-role{flex:1;padding:10px 4px;border-radius:10px;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;transition:all .2s}
 .ob-role:hover{border-color:var(--accent);color:var(--accent)}
-.ob-role.selected{border-color:var(--accent);background:rgba(26,115,232,0.08);color:var(--accent)}
-.ob-btn{width:100%;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;padding:13px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(26,115,232,0.35)}
+.ob-role.selected{border-color:var(--accent);background:rgba(27,60,83,0.08);color:var(--accent)}
+.ob-btn{width:100%;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;padding:13px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(27,60,83,0.3)}
 .ob-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
-.ob-btn:not(:disabled):hover{background:#1557b0}
+.ob-btn:not(:disabled):hover{background:#456882}
 
 /* ── App shell ── */
 #app{height:100%;display:flex;flex-direction:column}
@@ -61,8 +61,8 @@ canvas#map{display:block;touch-action:none}
 .search-divider{height:1px;background:var(--border);margin:10px 0 10px 18px}
 .swap-btn{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:#fff;border:1.5px solid var(--border);color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.1);transition:all .2s;z-index:5}
 .swap-btn:hover{border-color:var(--accent);color:var(--accent)}
-.go-btn{width:100%;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;padding:11px;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;box-shadow:0 3px 10px rgba(26,115,232,0.3)}
-.go-btn:hover{background:#1557b0}
+.go-btn{width:100%;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;padding:11px;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;box-shadow:0 3px 10px rgba(27,60,83,0.25)}
+.go-btn:hover{background:#456882}
 .go-btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 .error-msg{margin-top:8px;padding:8px 11px;background:#fdf0f0;border:1px solid #f5c6c6;border-radius:8px;font-size:12px;color:var(--danger);display:none}
 
@@ -72,7 +72,7 @@ canvas#map{display:block;touch-action:none}
 .drop::-webkit-scrollbar{width:4px}.drop::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 .di{padding:9px 12px;cursor:pointer;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:background .1s;border-bottom:1px solid #f0f0f0}
 .di:last-child{border-bottom:none}
-.di:hover,.di.focused{background:rgba(26,115,232,0.06)}
+.di:hover,.di.focused{background:rgba(27,60,83,0.06)}
 .rid{font-family:'Courier New',monospace;font-size:11px;color:var(--accent);font-weight:700}
 .rinfo{font-size:10px;color:var(--muted);text-align:right}
 
@@ -84,26 +84,26 @@ canvas#map{display:block;touch-action:none}
 .dir-close:hover{background:var(--surface2);color:var(--text)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
-.chip.blue{border-color:var(--accent);color:var(--accent);background:rgba(26,115,232,0.07)}
-.chip.green{border-color:var(--accent2);color:var(--accent2);background:rgba(0,185,107,0.07)}
+.chip.blue{border-color:var(--accent);color:var(--accent);background:rgba(27,60,83,0.07)}
+.chip.green{border-color:var(--accent2);color:var(--accent2);background:rgba(69,104,130,0.07)}
 .chip.orange{border-color:var(--warn);color:var(--warn);background:rgba(245,166,35,0.07)}
 .steps-list{padding:6px 0}
-.step-item{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid #f5f5f5;cursor:default}
+.step-item{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bg);cursor:default}
 .step-item:last-child{border-bottom:none}
 .step-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.step-ico.start{background:#fff8ec;border:1.5px solid var(--warn)}
-.step-ico.walk{background:#f0f7ff;border:1.5px solid var(--accent)}
-.step-ico.stairs{background:#f5f0ff;border:1.5px solid var(--stairs)}
-.step-ico.elevator{background:#f5f0ff;border:1.5px solid var(--stairs)}
-.step-ico.arrived{background:#f0faf5;border:1.5px solid var(--accent2)}
+.step-ico.start{background:#fdf6ee;border:1.5px solid var(--warn)}
+.step-ico.walk{background:#edf1f5;border:1.5px solid var(--accent)}
+.step-ico.stairs{background:#e8edf1;border:1.5px solid var(--stairs)}
+.step-ico.elevator{background:#e8edf1;border:1.5px solid var(--stairs)}
+.step-ico.arrived{background:#edf3f0;border:1.5px solid var(--accent2)}
 .step-text{flex:1;font-size:12px;line-height:1.5;color:var(--text);padding-top:6px}
 .floor-link{display:inline-block;margin-top:3px;font-size:10px;color:var(--accent);cursor:pointer;text-decoration:underline}
 
 /* ── Floor tabs ── */
 #floor-tabs{position:absolute;top:16px;left:50%;transform:translateX(-50%);display:flex;gap:3px;z-index:20;background:rgba(255,255,255,0.92);padding:4px;border-radius:12px;border:1px solid var(--border);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
 .ftab{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);background:none;border:none;transition:all .2s}
-.ftab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(26,115,232,0.3)}
-.ftab:hover:not(.active){color:var(--accent);background:rgba(26,115,232,0.08)}
+.ftab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(27,60,83,0.25)}
+.ftab:hover:not(.active){color:var(--accent);background:rgba(27,60,83,0.08)}
 
 /* ── Map control buttons ── */
 #map-btns{position:absolute;bottom:24px;right:16px;display:flex;flex-direction:column;gap:6px;z-index:20}
@@ -186,6 +186,7 @@ canvas#map{display:block;touch-action:none}
       <button class="map-btn" title="Zoom in" onclick="zoomMap(1.25)">+</button>
       <button class="map-btn" title="Zoom out" onclick="zoomMap(0.8)">−</button>
       <button class="map-btn" title="Reset view" onclick="resetView()">⌂</button>
+      <button class="map-btn" id="rotate-btn" title="Rotate map 90°" onclick="rotateMap()">↻</button>
     </div>
 
     <!-- Panel (desktop: absolute left; mobile: bottom sheet) -->
@@ -270,6 +271,8 @@ let floorData = {};
 let routeData = null;
 let fromRoom = null, toRoom = null;
 let camX = 0, camY = 0, camScale = 1;
+let mapAngle = 0; // rotation in radians (0, π/2, π, 3π/2)
+let worldCX = 0, worldCY = 0; // world-space center for rotation pivot
 let viewInited = false;
 
 const urlParams = new URLSearchParams(location.search);
@@ -376,7 +379,21 @@ function zoomMap(factor) {
 }
 
 function worldToScreen(x, y) {
-  return [x*camScale+camX, -y*camScale+camY];
+  const cos = Math.cos(mapAngle), sin = Math.sin(mapAngle);
+  const dx = x - worldCX, dy = y - worldCY;
+  const rx = cos*dx - sin*dy + worldCX;
+  const ry = sin*dx + cos*dy + worldCY;
+  return [rx*camScale+camX, -ry*camScale+camY];
+}
+
+function rotateMap() {
+  mapAngle = (mapAngle + Math.PI/2) % (Math.PI*2);
+  // update button label to show current orientation
+  const labels = ['↻','↑→','↓←','←↑'];
+  const idx = Math.round(mapAngle / (Math.PI/2)) % 4;
+  document.getElementById('rotate-btn').title = `Rotate map 90° (${idx*90}°)`;
+  viewInited = false;
+  drawMap();
 }
 
 function initViewForFloor(data) {
@@ -390,9 +407,19 @@ function initViewForFloor(data) {
   const padX=40, padTop=60, padBot=sheetH+40;
   const availH = canvas.height - padTop - padBot;
   const sx=(canvas.width-padX*2)/fw, sy=availH/fh;
-  camScale=Math.min(sx,sy);
-  camX=padX-b.x_min*camScale;
-  camY=padTop+b.y_max*camScale;
+  // world center for rotation pivot — use bounds center, adjusted for rotation
+  worldCX = (b.x_min + b.x_max) / 2;
+  worldCY = (b.y_min + b.y_max) / 2;
+  // rotated bounding box size
+  const cos = Math.abs(Math.cos(mapAngle)), sin = Math.abs(Math.sin(mapAngle));
+  const rfw = cos*fw + sin*fh, rfh = sin*fw + cos*fh;
+  const sx2=(canvas.width-padX*2)/rfw, sy2=availH/rfh;
+  camScale=Math.min(sx2,sy2);
+  // center the rotated map on screen
+  const scrCX = padX + (canvas.width-padX*2)/2;
+  const scrCY = padTop + availH/2;
+  camX = scrCX - worldCX*camScale;
+  camY = scrCY + worldCY*camScale;
   viewInited=true;
 }
 
@@ -400,7 +427,7 @@ function initViewForFloor(data) {
 function drawMap() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   // Waze-style warm off-white background
-  ctx.fillStyle='#f0ede8';
+  ctx.fillStyle='#F9F3EF';
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
   const data = floorData[currentFloor];
@@ -414,8 +441,8 @@ function drawMap() {
   const wallsB22 = data.walls_b22||[];
 
   // B21 walls — warm gray
-  ctx.lineWidth = Math.max(1, 1.4*camScale);
-  ctx.strokeStyle = 'rgba(160,148,136,0.7)';
+  ctx.lineWidth = Math.max(1.5, 2.5*camScale);
+  ctx.strokeStyle = 'rgba(140,128,116,0.85)';
   ctx.beginPath();
   for (const w of wallsB21) {
     const [sx,sy]=worldToScreen(w.start[0],w.start[1]);
@@ -426,7 +453,7 @@ function drawMap() {
 
   // B22 walls — cool gray; shifted -15 X, +30 Y to align with B21
   const B22_DX = -46, B22_DY = -29;
-  ctx.strokeStyle = 'rgba(136,148,168,0.7)';
+  ctx.strokeStyle = 'rgba(116,128,148,0.85)';
   ctx.beginPath();
   for (const w of wallsB22) {
     const [sx,sy]=worldToScreen(w.start[0]+B22_DX, w.start[1]+B22_DY);
@@ -451,46 +478,62 @@ function drawMap() {
       }
       if (cur.length) segs.push(cur);
 
+      // Catmull-Rom spline: draw smooth curve through screen-space points
+      function splinePath(pts) {
+        if (pts.length < 2) return;
+        if (pts.length === 2) { ctx.moveTo(pts[0][0],pts[0][1]); ctx.lineTo(pts[1][0],pts[1][1]); return; }
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 0; i < pts.length - 1; i++) {
+          const p0 = pts[Math.max(0,i-1)], p1 = pts[i], p2 = pts[i+1], p3 = pts[Math.min(pts.length-1,i+2)];
+          const cp1x = p1[0] + (p2[0]-p0[0])/6;
+          const cp1y = p1[1] + (p2[1]-p0[1])/6;
+          const cp2x = p2[0] - (p3[0]-p1[0])/6;
+          const cp2y = p2[1] - (p3[1]-p1[1])/6;
+          ctx.bezierCurveTo(cp1x,cp1y, cp2x,cp2y, p2[0],p2[1]);
+        }
+      }
+
       for (const seg of segs) {
         if (seg.length<2) continue;
 
-        // Outer glow
-        ctx.beginPath();
-        ctx.strokeStyle='rgba(26,115,232,0.18)';
-        ctx.lineWidth=16*Math.max(camScale,0.3);
-        ctx.lineJoin='round'; ctx.lineCap='round';
+        // Split seg at door boundaries into sub-segments
+        const subSegs = []; let cur = [];
         for (let i=0;i<seg.length;i++) {
-          const [sx,sy]=worldToScreen(seg[i].x,seg[i].y);
-          i===0?ctx.moveTo(sx,sy):ctx.lineTo(sx,sy);
+          const pt = seg[i];
+          if (i>0 && (seg[i-1].is_door || pt.is_door)) { subSegs.push({pts:cur,door:true}); cur=[]; }
+          cur.push(pt);
         }
-        ctx.stroke();
+        subSegs.push({pts:cur,door:false});
 
-        // Main route line
-        ctx.setLineDash([]);
-        ctx.strokeStyle='#1a73e8';
-        ctx.lineWidth=4.5*Math.max(camScale,0.3);
-        ctx.lineJoin='round'; ctx.lineCap='round';
-        ctx.beginPath();
-        for (let i=0;i<seg.length;i++) {
-          const [sx,sy]=worldToScreen(seg[i].x,seg[i].y);
-          if (i===0){ctx.moveTo(sx,sy);continue;}
-          const prev=seg[i-1];
-          if (prev.is_door||seg[i].is_door) {
-            ctx.stroke();
-            ctx.setLineDash([5*Math.max(camScale,0.3),4*Math.max(camScale,0.3)]);
-            ctx.strokeStyle='rgba(26,115,232,0.6)';
-            ctx.lineWidth=2.5*Math.max(camScale,0.3);
-            ctx.beginPath();
-            ctx.moveTo(...worldToScreen(prev.x,prev.y));
-            ctx.lineTo(sx,sy); ctx.stroke();
-            ctx.setLineDash([]);
-            ctx.strokeStyle='#1a73e8';
-            ctx.lineWidth=4.5*Math.max(camScale,0.3);
-            ctx.beginPath(); ctx.moveTo(sx,sy);
-          } else { ctx.lineTo(sx,sy); }
+        // Outer glow — smooth
+        for (const ss of subSegs) {
+          if (ss.pts.length<2) continue;
+          ctx.beginPath();
+          ctx.strokeStyle='rgba(27,60,83,0.18)';
+          ctx.lineWidth=22*Math.max(camScale,0.3);
+          ctx.lineJoin='round'; ctx.lineCap='round';
+          splinePath(ss.pts.map(p=>worldToScreen(p.x,p.y)));
+          ctx.stroke();
         }
-        ctx.stroke();
-        ctx.setLineDash([]);
+
+        // Main route line — smooth solid / dashed for door connectors
+        for (const ss of subSegs) {
+          if (ss.pts.length<2) continue;
+          ctx.setLineDash([]);
+          if (ss.door) {
+            ctx.setLineDash([5*Math.max(camScale,0.3),4*Math.max(camScale,0.3)]);
+            ctx.strokeStyle='rgba(27,60,83,0.5)';
+            ctx.lineWidth=3.5*Math.max(camScale,0.3);
+          } else {
+            ctx.strokeStyle='#1B3C53';
+            ctx.lineWidth=7*Math.max(camScale,0.3);
+          }
+          ctx.lineJoin='round'; ctx.lineCap='round';
+          ctx.beginPath();
+          splinePath(ss.pts.map(p=>worldToScreen(p.x,p.y)));
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
       }
 
       // Stair/elevator markers
@@ -503,7 +546,7 @@ function drawMap() {
 
         if (Math.hypot(mx-wx,my-wy)>3) {
           ctx.setLineDash([4*Math.max(camScale,0.3),4*Math.max(camScale,0.3)]);
-          ctx.strokeStyle='rgba(124,77,255,0.6)';
+          ctx.strokeStyle='rgba(69,104,130,0.6)';
           ctx.lineWidth=1.5*Math.max(camScale,0.3);
           ctx.beginPath(); ctx.moveTo(wx,wy); ctx.lineTo(mx,my); ctx.stroke();
           ctx.setLineDash([]);
@@ -515,7 +558,7 @@ function drawMap() {
         ctx.fillStyle='rgba(0,0,0,0.15)'; ctx.fill();
         // Circle
         ctx.beginPath(); ctx.arc(mx,my,r,0,Math.PI*2);
-        ctx.fillStyle='#7c4dff'; ctx.fill();
+        ctx.fillStyle='#456882'; ctx.fill();
         ctx.fillStyle='#fff';
         ctx.font=`bold ${Math.max(10,13*camScale)}px sans-serif`;
         ctx.textAlign='center'; ctx.textBaseline='middle';
@@ -524,7 +567,7 @@ function drawMap() {
         if (p.stair_room) {
           const fs=Math.max(7,9*Math.min(camScale,1.5));
           ctx.font=`${fs}px 'Courier New',monospace`;
-          ctx.fillStyle='#7c4dff';
+          ctx.fillStyle='#456882';
           ctx.textAlign='center'; ctx.textBaseline='top';
           ctx.fillText(p.stair_room,mx,my+r+2*Math.max(camScale,0.3));
         }
