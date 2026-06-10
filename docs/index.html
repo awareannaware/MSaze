@@ -815,6 +815,7 @@ function setupAutocomplete(inputId, dropId, onSelect) {
     else if (e.key==='ArrowUp'){focusIdx=Math.max(focusIdx-1,0);highlight(items);e.preventDefault();}
     else if (e.key==='Enter'){
       if (focusIdx>=0&&items[focusIdx]){ onSelect(items[focusIdx].dataset.id,inp); drop.classList.remove('show'); }
+      else if (inp.id==='to-inp') { drop.classList.remove('show'); findRoute(); }
     } else if (e.key==='Escape'){ drop.classList.remove('show'); }
   });
 
