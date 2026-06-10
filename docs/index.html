@@ -769,6 +769,7 @@ function updateSheetHeight() {
 
 // ── Autocomplete ───────────────────────────────────────────────────────────
 const SKIP_TYPES=['stairwell','elevator','shaft','elevator shaft'];
+const SKIP_ROOMS=new Set(['21206']);
 function isSkipType(t){ const tl=(t||'').toLowerCase(); return SKIP_TYPES.some(s=>tl.includes(s)); }
 
 function setupAutocomplete(inputId, dropId, onSelect) {
@@ -781,6 +782,7 @@ function setupAutocomplete(inputId, dropId, onSelect) {
     if (!q) { drop.classList.remove('show'); return; }
     const matches=ALL_ROOMS.filter(r => {
       if (isSkipType(r.type)) return false;
+      if (SKIP_ROOMS.has(r.id)) return false;
       return r.id.toLowerCase().includes(q)||(r.type||'').toLowerCase().includes(q);
     }).sort((a,b) => {
       const ai=a.id.toLowerCase(), bi=b.id.toLowerCase();
