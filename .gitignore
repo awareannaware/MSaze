@@ -11,3 +11,6 @@ backend/nav_graph.json
 backend/door_validation.json
 backend/dxf_analysis.json
 memory/
+# Allow static site data files
+!static_site/data/
+!static_site/data/*.json
