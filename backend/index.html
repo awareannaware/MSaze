@@ -462,6 +462,22 @@ function drawMap() {
   }
   ctx.stroke();
 
+  // ── Restroom markers ──
+  const restrooms = data.restrooms || [];
+  for (const r of restrooms) {
+    const [rx, ry] = worldToScreen(r.x, r.y);
+    const rad = Math.max(8, 10 * camScale);
+    ctx.beginPath(); ctx.arc(rx, ry, rad + 1, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(rx, ry, rad, 0, Math.PI * 2);
+    ctx.fillStyle = '#0077cc'; ctx.fill();
+    const fs = Math.max(7, 9 * Math.min(camScale, 2));
+    ctx.font = `bold ${fs}px sans-serif`;
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('WC', rx, ry);
+  }
+
   // ── Route ──
   if (routeData?.corridor_path) {
     const allPts = routeData.corridor_path;

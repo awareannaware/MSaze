@@ -289,11 +289,18 @@ def get_floormap(floor_num: int):
     else:
         all_x = []; all_y = []
 
+    restroom_nodes = [
+        {"x": n["x"], "y": n["y"], "room_id": n.get("room_id", "")}
+        for n in _NG2_NODES.values()
+        if n.get("restroom") and n.get("floor") == floor_num
+    ]
+
     return {
         "floor":     floor_num,
         "rooms":     floor_nodes,
         "walls_b21": walls_b21,
         "walls_b22": walls_b22,
+        "restrooms": restroom_nodes,
         "bounds": {
             "x_min": min(all_x) - 100 if all_x else -2500,
             "x_max": max(all_x) + 100 if all_x else 6800,
