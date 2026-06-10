@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MSaze — Campus Navigation</title>
+<style>
+:root{
+  --bg:#F9F3EF;--surface:#ffffff;--surface2:#f5f0ec;--border:#D2C1B6;
+  --accent:#1B3C53;--accent2:#456882;--warn:#c27c3a;--danger:#b94040;
+  --text:#1B3C53;--muted:#456882;--subtle:#D2C1B6;
+  --wall21:#9a8f84;--wall22:#7a8fa0;
+  --route:#1B3C53;--route-glow:rgba(27,60,83,0.22);
+  --start:#c27c3a;--end:#b94040;--stairs:#456882;
+  --shadow:0 2px 12px rgba(27,60,83,0.12);--shadow-lg:0 8px 32px rgba(27,60,83,0.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
+
+/* ── Onboarding ── */
+#onboarding{position:fixed;inset:0;background:linear-gradient(135deg,#1B3C53 0%,#0d2535 100%);z-index:1000;display:flex;align-items:center;justify-content:center}
+#onboarding.hidden{display:none}
+.ob-card{background:#fff;border-radius:20px;padding:36px 28px;width:340px;max-width:90vw;text-align:center;box-shadow:var(--shadow-lg)}
+.ob-logo{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:2px;letter-spacing:-1px}
+.ob-logo span{color:var(--accent2)}
+.ob-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.ob-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;text-align:left}
+.ob-input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;padding:11px 14px;outline:none;margin-bottom:18px;transition:border-color .2s}
+.ob-input:focus{border-color:var(--accent)}
+.ob-roles{display:flex;gap:8px;margin-bottom:24px}
+.ob-role{flex:1;padding:10px 4px;border-radius:10px;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;transition:all .2s}
+.ob-role:hover{border-color:var(--accent);color:var(--accent)}
+.ob-role.selected{border-color:var(--accent);background:rgba(27,60,83,0.08);color:var(--accent)}
+.ob-btn{width:100%;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;padding:13px;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(27,60,83,0.3)}
+.ob-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.ob-btn:not(:disabled):hover{background:#456882}
+
+/* ── App shell ── */
+#app{height:100%;display:flex;flex-direction:column}
+
+/* ── Map (full screen behind everything) ── */
+#map-wrap{position:relative;flex:1;overflow:hidden;background:var(--bg)}
+canvas#map{display:block;touch-action:none}
+
+/* ── Top bar (desktop) ── */
+#topbar{display:none}
+
+/* ── Search card (desktop: left panel; mobile: bottom sheet) ── */
+#panel{position:absolute;top:16px;left:16px;width:320px;z-index:30;display:flex;flex-direction:column;gap:0}
+
+/* Search card */
+#search-card{background:var(--surface);border-radius:16px;padding:14px;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+.search-row{display:flex;align-items:center;gap:8px;position:relative}
+.search-row + .search-row{margin-top:8px}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot.from{background:var(--start)}
+.dot.to{background:var(--end)}
+.search-inp{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;padding:9px 11px;outline:none;transition:border-color .2s}
+.search-inp:focus{border-color:var(--accent);background:#fff}
+.search-inp::placeholder{color:var(--subtle)}
+.search-divider{height:1px;background:var(--border);margin:10px 0 10px 18px}
+.swap-btn{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:#fff;border:1.5px solid var(--border);color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.1);transition:all .2s;z-index:5}
+.swap-btn:hover{border-color:var(--accent);color:var(--accent)}
+.go-btn{width:100%;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;padding:11px;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;box-shadow:0 3px 10px rgba(27,60,83,0.25)}
+.go-btn:hover{background:#456882}
+.go-btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.error-msg{margin-top:8px;padding:8px 11px;background:#fdf0f0;border:1px solid #f5c6c6;border-radius:8px;font-size:12px;color:var(--danger);display:none}
+
+/* Dropdown */
+.drop{position:absolute;top:calc(100% + 4px);left:18px;right:0;background:#fff;border:1.5px solid var(--border);border-radius:12px;max-height:200px;overflow-y:auto;z-index:500;display:none;box-shadow:var(--shadow-lg)}
+.drop.show{display:block}
+.drop::-webkit-scrollbar{width:4px}.drop::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.di{padding:9px 12px;cursor:pointer;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:background .1s;border-bottom:1px solid #f0f0f0}
+.di:last-child{border-bottom:none}
+.di:hover,.di.focused{background:rgba(27,60,83,0.06)}
+.rid{font-family:'Courier New',monospace;font-size:11px;color:var(--accent);font-weight:700}
+.rinfo{font-size:10px;color:var(--muted);text-align:right}
+
+/* Directions card */
+#directions-card{background:var(--surface);border-radius:16px;margin-top:8px;box-shadow:var(--shadow-lg);border:1px solid var(--border);overflow:hidden;display:none;max-height:calc(100vh - 240px);overflow-y:auto}
+#directions-card::-webkit-scrollbar{width:3px}#directions-card::-webkit-scrollbar-thumb{background:var(--border)}
+.dir-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.dir-close{margin-left:auto;background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:6px}
+.dir-close:hover{background:var(--surface2);color:var(--text)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.chip.blue{border-color:var(--accent);color:var(--accent);background:rgba(27,60,83,0.07)}
+.chip.green{border-color:var(--accent2);color:var(--accent2);background:rgba(69,104,130,0.07)}
+.chip.orange{border-color:var(--warn);color:var(--warn);background:rgba(245,166,35,0.07)}
+.steps-list{padding:6px 0}
+.step-item{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bg);cursor:default}
+.step-item:last-child{border-bottom:none}
+.step-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.step-ico.start{background:#fdf6ee;border:1.5px solid var(--warn)}
+.step-ico.walk{background:#edf1f5;border:1.5px solid var(--accent)}
+.step-ico.stairs{background:#e8edf1;border:1.5px solid var(--stairs)}
+.step-ico.elevator{background:#e8edf1;border:1.5px solid var(--stairs)}
+.step-ico.arrived{background:#edf3f0;border:1.5px solid var(--accent2)}
+.step-text{flex:1;font-size:12px;line-height:1.5;color:var(--text);padding-top:6px}
+.floor-link{display:inline-block;margin-top:3px;font-size:10px;color:var(--accent);cursor:pointer;text-decoration:underline}
+
+/* ── Floor tabs ── */
+#floor-tabs{position:absolute;top:16px;left:50%;transform:translateX(-50%);display:flex;gap:3px;z-index:20;background:rgba(255,255,255,0.92);padding:4px;border-radius:12px;border:1px solid var(--border);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+.ftab{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);background:none;border:none;transition:all .2s}
+.ftab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(27,60,83,0.25)}
+.ftab:hover:not(.active){color:var(--accent);background:rgba(27,60,83,0.08)}
+
+/* ── Map control buttons ── */
+#map-btns{position:absolute;bottom:24px;right:16px;display:flex;flex-direction:column;gap:6px;z-index:20}
+.map-btn{width:40px;height:40px;background:#fff;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:all .2s}
+.map-btn:hover{background:var(--surface2);border-color:var(--accent);color:var(--accent)}
+
+/* ── User badge (top right) ── */
+#user-badge{position:absolute;top:16px;right:16px;z-index:25;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px 10px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);font-size:12px;cursor:pointer}
+#user-badge:hover{border-color:var(--accent)}
+.badge-role{font-size:10px;color:var(--muted)}
+.badge-name{font-weight:600;color:var(--text)}
+
+/* ── Spinner ── */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Mobile layout ── */
+@media (max-width:767px){
+  #floor-tabs{top:auto;bottom:calc(var(--sheet-h, 180px) + 12px);left:50%;transform:translateX(-50%)}
+  #map-btns{bottom:calc(var(--sheet-h, 180px) + 12px);right:12px}
+  #user-badge{top:12px;right:12px;padding:5px 8px}
+  #panel{
+    position:fixed;bottom:0;left:0;right:0;top:auto;width:100%;
+    border-radius:20px 20px 0 0;
+    background:var(--surface);
+    box-shadow:0 -4px 20px rgba(0,0,0,0.12);
+    z-index:40;
+    padding:0 16px 24px;
+    max-height:85vh;
+    overflow-y:auto;
+  }
+  #panel::before{content:'';display:block;width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 14px}
+  #search-card{box-shadow:none;border:none;padding:0;border-radius:0}
+  #directions-card{box-shadow:none;border:none;border-radius:0;border-top:1px solid var(--border);margin-top:12px;max-height:none;overflow-y:visible}
+  .drop{left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- Onboarding -->
+<div id="onboarding">
+  <div class="ob-card">
+    <div class="ob-logo">M<span>Saze</span></div>
+    <div class="ob-sub">Campus Navigation — Tell us who you are</div>
+    <label class="ob-label">Your name</label>
+    <input class="ob-input" id="ob-name" type="text" placeholder="e.g. Sara, Alex..." autocomplete="off">
+    <label class="ob-label">I am a...</label>
+    <div class="ob-roles">
+      <button class="ob-role" data-role="student" onclick="selectRole(this)">Student</button>
+      <button class="ob-role" data-role="staff" onclick="selectRole(this)">Staff</button>
+      <button class="ob-role" data-role="visitor" onclick="selectRole(this)">Visitor</button>
+    </div>
+    <button class="ob-btn" id="ob-btn" disabled onclick="submitOnboarding()">Let's go →</button>
+  </div>
+</div>
+
+<div id="app">
+  <div id="map-wrap">
+    <canvas id="map"></canvas>
+
+    <!-- Floor tabs -->
+    <div id="floor-tabs">
+      <button class="ftab" onclick="switchFloor(1)">F1</button>
+      <button class="ftab" onclick="switchFloor(2)">F2</button>
+      <button class="ftab active" onclick="switchFloor(3)">F3</button>
+      <button class="ftab" onclick="switchFloor(4)">F4</button>
+      <button class="ftab" onclick="switchFloor(5)">F5</button>
+      <button class="ftab" onclick="switchFloor(6)">F6</button>
+    </div>
+
+    <!-- User badge -->
+    <div id="user-badge" onclick="resetUser()" title="Tap to change user">
+      <span>👤</span>
+      <div><div class="badge-name" id="badge-name">—</div><div class="badge-role" id="badge-role"></div></div>
+    </div>
+
+    <!-- Map controls -->
+    <div id="map-btns">
+      <button class="map-btn" title="Zoom in" onclick="zoomMap(1.25)">+</button>
+      <button class="map-btn" title="Zoom out" onclick="zoomMap(0.8)">−</button>
+      <button class="map-btn" title="Reset view" onclick="resetView()">⌂</button>
+      <button class="map-btn" id="rotate-btn" title="Rotate map 90°" onclick="rotateMap()">↻</button>
+    </div>
+
+    <!-- Panel (desktop: absolute left; mobile: bottom sheet) -->
+    <div id="panel">
+      <!-- Search card -->
+      <div id="search-card">
+        <div class="search-row" style="position:relative">
+          <span class="dot from"></span>
+          <input class="search-inp" id="from-inp" type="text" placeholder="From — room number or type..." autocomplete="off">
+          <div class="drop" id="from-drop"></div>
+          <button class="swap-btn" style="right:-4px;top:calc(100% + 8px)" onclick="swapRooms()">⇅</button>
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-row" style="position:relative">
+          <span class="dot to"></span>
+          <input class="search-inp" id="to-inp" type="text" placeholder="To — room number or type..." autocomplete="off">
+          <div class="drop" id="to-drop"></div>
+        </div>
+        <button class="go-btn" id="route-btn" onclick="findRoute()">
+          <span id="route-btn-text">Find Route</span>
+        </button>
+        <div class="error-msg" id="error-banner"></div>
+      </div>
+
+      <!-- Directions card -->
+      <div id="directions-card">
+        <div class="dir-header">
+          <div class="chips" id="summary"></div>
+          <button class="dir-close" onclick="closeDirections()">✕</button>
+        </div>
+        <div class="steps-list" id="steps-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── User identity ──────────────────────────────────────────────────────────
+let USER = JSON.parse(localStorage.getItem('msaze_user') || 'null');
+
+function selectRole(btn) {
+  document.querySelectorAll('.ob-role').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  checkObReady();
+}
+function checkObReady() {
+  const name = document.getElementById('ob-name').value.trim();
+  const role = document.querySelector('.ob-role.selected');
+  document.getElementById('ob-btn').disabled = !name || !role;
+}
+function submitOnboarding() {
+  const name = document.getElementById('ob-name').value.trim();
+  const role = document.querySelector('.ob-role.selected')?.dataset.role;
+  if (!name || !role) return;
+  USER = { id: crypto.randomUUID(), name, role };
+  localStorage.setItem('msaze_user', JSON.stringify(USER));
+  document.getElementById('onboarding').classList.add('hidden');
+  updateBadge();
+}
+function resetUser() {
+  if (!confirm('Change user?')) return;
+  localStorage.removeItem('msaze_user');
+  location.reload();
+}
+function updateBadge() {
+  if (!USER) return;
+  document.getElementById('badge-name').textContent = USER.name;
+  document.getElementById('badge-role').textContent = USER.role;
+}
+
+if (!USER) {
+  document.getElementById('ob-name').addEventListener('input', checkObReady);
+} else {
+  document.getElementById('onboarding').classList.add('hidden');
+  updateBadge();
+}
+
+// ── State ──────────────────────────────────────────────────────────────────
+let ALL_ROOMS = [];
+let currentFloor = 3;
+let floorData = {};
+let routeData = null;
+let fromRoom = null, toRoom = null;
+let camX = 0, camY = 0, camScale = 1;
+let mapAngle = 0; // rotation in radians (0, π/2, π, 3π/2)
+let worldCX = 0, worldCY = 0; // world-space center for rotation pivot
+let viewInited = false;
+
+// ── Data ───────────────────────────────────────────────────────────────────
+let NAV_GRAPH = null;
+let FLOOR_WALLS = null;
+let ROOMS_DATA = null;
+
+async function loadAllData() {
+  const [ng, fw, rm] = await Promise.all([
+    fetch('data/nav_graph2.json').then(r=>r.json()),
+    fetch('data/floor_walls.json').then(r=>r.json()),
+    fetch('data/rooms.json').then(r=>r.json()),
+  ]);
+  NAV_GRAPH = ng;
+  FLOOR_WALLS = fw;
+  ROOMS_DATA = rm;
+  initGraph();
+  buildAllFloorData();
+  buildRoomsList();
+}
+
+// ── Graph init ─────────────────────────────────────────────────────────────
+let NG2_NODES = {};
+let NG2_ROOMS = {};
+let NG2_ADJ = {};
+let NG2_ELEV_NODES = new Set();
+let NG2_GRID = [];
+let NG2_MAIN_COMP = new Set();
+const CROSS_BLD_THRESHOLD = 500.0;
+
+function initGraph() {
+  // Build node lookup
+  for (const n of NAV_GRAPH.nodes) {
+    NG2_NODES[n.id] = n;
+  }
+
+  // Build room → door nodes map
+  for (const n of NAV_GRAPH.nodes) {
+    if ((n.type === 'DOOR' || n.type === 'STAIR_LANDING') && n.room_id) {
+      if (!NG2_ROOMS[n.room_id]) NG2_ROOMS[n.room_id] = [];
+      NG2_ROOMS[n.room_id].push(n.id);
+    }
+  }
+
+  // Build adjacency list
+  const existingEdges = new Set();
+  for (const e of NAV_GRAPH.edges) {
+    if (!NG2_ADJ[e.from]) NG2_ADJ[e.from] = [];
+    if (!NG2_ADJ[e.to]) NG2_ADJ[e.to] = [];
+    NG2_ADJ[e.from].push([e.to, e.cost]);
+    NG2_ADJ[e.to].push([e.from, e.cost]);
+    if (e.type === 'ELEVATOR') {
+      NG2_ELEV_NODES.add(e.from);
+      NG2_ELEV_NODES.add(e.to);
+    }
+    existingEdges.add(e.from + '|' + e.to);
+    existingEdges.add(e.to + '|' + e.from);
+  }
+
+  // Auto-generate cross-building CONNECTION edges
+  const connB21 = {}, connB22 = {};
+  for (const n of NAV_GRAPH.nodes) {
+    if (n.type === 'CONNECTION') {
+      if (n.building === '21') {
+        if (!connB21[n.floor]) connB21[n.floor] = [];
+        connB21[n.floor].push(n);
+      } else if (n.building === '22') {
+        if (!connB22[n.floor]) connB22[n.floor] = [];
+        connB22[n.floor].push(n);
+      }
+    }
+  }
+  for (const floor of Object.keys(connB21)) {
+    if (!connB22[floor]) continue;
+    for (const na of connB21[floor]) {
+      for (const nb of connB22[floor]) {
+        const dist = Math.hypot(na.x - nb.x, na.y - nb.y);
+        if (dist <= CROSS_BLD_THRESHOLD) {
+          const key = na.id + '|' + nb.id;
+          if (!existingEdges.has(key)) {
+            if (!NG2_ADJ[na.id]) NG2_ADJ[na.id] = [];
+            if (!NG2_ADJ[nb.id]) NG2_ADJ[nb.id] = [];
+            NG2_ADJ[na.id].push([nb.id, dist]);
+            NG2_ADJ[nb.id].push([na.id, dist]);
+            existingEdges.add(key);
+            existingEdges.add(nb.id + '|' + na.id);
+          }
+        }
+      }
+    }
+  }
+
+  // BFS to find main connected component
+  const startNode = NAV_GRAPH.nodes[0].id;
+  const queue = [startNode];
+  const visited = new Set();
+  while (queue.length) {
+    const u = queue.pop();
+    if (visited.has(u)) continue;
+    visited.add(u);
+    for (const [v] of (NG2_ADJ[u] || [])) {
+      if (!visited.has(v)) queue.push(v);
+    }
+  }
+  NG2_MAIN_COMP = visited;
+
+  // Build grid node list for snap fallback
+  NG2_GRID = NAV_GRAPH.nodes
+    .filter(n => n.type === 'GRID' && NG2_MAIN_COMP.has(n.id))
+    .map(n => ({id: n.id, x: n.x, y: n.y, building: n.building, floor: n.floor}));
+}
+
+// ── Floormap builder ───────────────────────────────────────────────────────
+function buildAllFloorData() {
+  for (let floor = 1; floor <= 6; floor++) {
+    const wallData = FLOOR_WALLS[String(floor)];
+    if (!wallData) continue;
+    const walls_b21 = wallData.b21 || [];
+    const walls_b22 = wallData.b22 || [];
+    const allWalls = walls_b21.concat(walls_b22);
+    let bounds;
+    if (allWalls.length) {
+      const allX = allWalls.flatMap(w => [w.start[0], w.end[0]]);
+      const allY = allWalls.flatMap(w => [w.start[1], w.end[1]]);
+      bounds = {
+        x_min: Math.min(...allX) - 100,
+        x_max: Math.max(...allX) + 100,
+        y_min: Math.min(...allY) - 100,
+        y_max: Math.max(...allY) + 100,
+      };
+    } else {
+      bounds = {x_min: -2500, x_max: 6800, y_min: 1000, y_max: 6200};
+    }
+    floorData[floor] = {floor, walls_b21, walls_b22, bounds};
+  }
+}
+
+// ── Rooms list builder ─────────────────────────────────────────────────────
+const TYPE_EN = {
+  'כיתת לימוד':'Classroom','כיתת סמינר':'Seminar Room',
+  'משרד':'Office','חדר חוקרים':'Researchers Room',
+  'חדר מדרגות':'Stairwell','פיר מעלית':'Elevator Shaft',
+  'מעלית':'Elevator','שירותים':'Restrooms','מעבדה':'Lab',
+  'פויאה':'Foyer','מבוא':'Entrance','מחסן':'Storage',
+  'פרוזדור':'Corridor','מעבר':'Passage','שרותי נכים':'Accessible Restrooms',
+  'חדר עוזרים':'Assistants Room','חדר מחשבים':'Computer Room',
+};
+const STAIR_TYPES = ['מדרגות','מעלית','פיר'];
+
+function typeEn(t) {
+  if (!t) return '';
+  for (const [heb, eng] of Object.entries(TYPE_EN)) {
+    if (t.includes(heb)) return eng;
+  }
+  return t;
+}
+
+function buildRoomsList() {
+  const seen = new Set();
+  ALL_ROOMS = [];
+  for (const r of ROOMS_DATA) {
+    if (seen.has(r.id)) continue;
+    seen.add(r.id);
+    const rawType = r.type || '';
+    if (STAIR_TYPES.some(s => rawType.includes(s))) continue;
+    const floorVal = r.floor_num || r.floor || '';
+    ALL_ROOMS.push({
+      id: r.id,
+      type: typeEn(rawType),
+      building: r.building || '',
+      floor: floorVal,
+      floor_num: floorVal,
+    });
+  }
+}
+
+// ── Floor data ─────────────────────────────────────────────────────────────
+async function loadFloor(floor) {
+  // data already pre-loaded in buildAllFloorData()
+  return floorData[floor] || null;
+}
+
+async function switchFloor(floor) {
+  currentFloor = floor;
+  document.querySelectorAll('.ftab').forEach((b,i) => b.classList.toggle('active', i+1 === floor));
+  viewInited = false;
+  await loadFloor(floor);
+  drawMap();
+}
+
+// ── Canvas setup ───────────────────────────────────────────────────────────
+const canvas = document.getElementById('map');
+const ctx = canvas.getContext('2d');
+
+function setupCanvas() {
+  resizeCanvas();
+  window.addEventListener('resize', () => { resizeCanvas(); drawMap(); updateSheetHeight(); });
+
+  let drag = false, lastX, lastY;
+  canvas.addEventListener('mousedown', e => { drag=true; lastX=e.clientX; lastY=e.clientY; canvas.style.cursor='grabbing'; });
+  window.addEventListener('mouseup', () => { drag=false; canvas.style.cursor='default'; });
+  canvas.addEventListener('mousemove', e => {
+    if (!drag) return;
+    camX += e.clientX-lastX; camY += e.clientY-lastY;
+    lastX=e.clientX; lastY=e.clientY; drawMap();
+  });
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.12 : 0.88;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX-rect.left, my = e.clientY-rect.top;
+    camX = mx-(mx-camX)*factor; camY = my-(my-camY)*factor; camScale *= factor;
+    drawMap();
+  }, {passive:false});
+
+  let touches = [], pinchDist0 = null, pinchCamScale0 = null;
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault(); touches=[...e.touches];
+    if (e.touches.length===2) {
+      pinchDist0=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      pinchCamScale0=camScale;
+    }
+  }, {passive:false});
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length===2 && pinchDist0) {
+      const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      const cx=(e.touches[0].clientX+e.touches[1].clientX)/2;
+      const cy=(e.touches[0].clientY+e.touches[1].clientY)/2;
+      const rect=canvas.getBoundingClientRect();
+      const factor=d/pinchDist0;
+      camScale=pinchCamScale0*factor;
+      camX=(cx-rect.left)-(cx-rect.left-camX)*factor;
+      camY=(cy-rect.top)-(cy-rect.top-camY)*factor;
+      touches=[...e.touches];
+    } else if (e.touches.length===1 && touches.length>=1) {
+      camX+=e.touches[0].clientX-touches[0].clientX;
+      camY+=e.touches[0].clientY-touches[0].clientY;
+      touches=[...e.touches];
+    }
+    drawMap();
+  }, {passive:false});
+  canvas.addEventListener('touchend', e => { touches=[...e.touches]; if(e.touches.length<2) pinchDist0=null; });
+}
+
+function resizeCanvas() {
+  const wrap = document.getElementById('map-wrap');
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+}
+
+function resetView() { viewInited=false; drawMap(); }
+function zoomMap(factor) {
+  const cx=canvas.width/2, cy=canvas.height/2;
+  camX=cx-(cx-camX)*factor; camY=cy-(cy-camY)*factor; camScale*=factor;
+  drawMap();
+}
+
+function worldToScreen(x, y) {
+  const cos = Math.cos(mapAngle), sin = Math.sin(mapAngle);
+  const dx = x - worldCX, dy = y - worldCY;
+  const rx = cos*dx - sin*dy + worldCX;
+  const ry = sin*dx + cos*dy + worldCY;
+  return [rx*camScale+camX, -ry*camScale+camY];
+}
+
+function rotateMap() {
+  mapAngle = (mapAngle + Math.PI/2) % (Math.PI*2);
+  // update button label to show current orientation
+  const labels = ['↻','↑→','↓←','←↑'];
+  const idx = Math.round(mapAngle / (Math.PI/2)) % 4;
+  document.getElementById('rotate-btn').title = `Rotate map 90° (${idx*90}°)`;
+  viewInited = false;
+  drawMap();
+}
+
+function initViewForFloor(data) {
+  if (!data?.bounds) return;
+  const b = data.bounds;
+  const fw=b.x_max-b.x_min, fh=b.y_max-b.y_min;
+  if (fw<=0||fh<=0) return;
+  // On mobile leave room for the bottom sheet
+  const isMobile = window.innerWidth < 768;
+  const sheetH = isMobile ? (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sheet-h'))||180) : 0;
+  const padX=40, padTop=60, padBot=sheetH+40;
+  const availH = canvas.height - padTop - padBot;
+  const sx=(canvas.width-padX*2)/fw, sy=availH/fh;
+  // world center for rotation pivot — use bounds center, adjusted for rotation
+  worldCX = (b.x_min + b.x_max) / 2;
+  worldCY = (b.y_min + b.y_max) / 2;
+  // rotated bounding box size
+  const cos = Math.abs(Math.cos(mapAngle)), sin = Math.abs(Math.sin(mapAngle));
+  const rfw = cos*fw + sin*fh, rfh = sin*fw + cos*fh;
+  const sx2=(canvas.width-padX*2)/rfw, sy2=availH/rfh;
+  camScale=Math.min(sx2,sy2);
+  // center the rotated map on screen
+  const scrCX = padX + (canvas.width-padX*2)/2;
+  const scrCY = padTop + availH/2;
+  camX = scrCX - worldCX*camScale;
+  camY = scrCY + worldCY*camScale;
+  viewInited=true;
+}
+
+// ── Draw ───────────────────────────────────────────────────────────────────
+function drawMap() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Waze-style warm off-white background
+  ctx.fillStyle='#F9F3EF';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const data = floorData[currentFloor];
+  if (!data) return;
+  if (!viewInited) initViewForFloor(data);
+
+  ctx.save();
+
+  // ── Walls ──
+  const wallsB21 = data.walls_b21||[];
+  const wallsB22 = data.walls_b22||[];
+
+  // B21 walls — warm gray
+  ctx.lineWidth = Math.max(1.5, 2.5*camScale);
+  ctx.strokeStyle = 'rgba(140,128,116,0.85)';
+  ctx.beginPath();
+  for (const w of wallsB21) {
+    const [sx,sy]=worldToScreen(w.start[0],w.start[1]);
+    const [ex,ey]=worldToScreen(w.end[0],w.end[1]);
+    ctx.moveTo(sx,sy); ctx.lineTo(ex,ey);
+  }
+  ctx.stroke();
+
+  // B22 walls — cool gray; shifted -15 X, +30 Y to align with B21
+  const B22_DX = -46, B22_DY = -29;
+  ctx.strokeStyle = 'rgba(116,128,148,0.85)';
+  ctx.beginPath();
+  for (const w of wallsB22) {
+    const [sx,sy]=worldToScreen(w.start[0]+B22_DX, w.start[1]+B22_DY);
+    const [ex,ey]=worldToScreen(w.end[0]+B22_DX,   w.end[1]+B22_DY);
+    ctx.moveTo(sx,sy); ctx.lineTo(ex,ey);
+  }
+  ctx.stroke();
+
+  // ── Route ──
+  if (routeData?.corridor_path) {
+    const allPts = routeData.corridor_path;
+    const floorPts = allPts.filter(p => p.floor===currentFloor);
+
+    if (floorPts.length >= 2) {
+      // Split at floor boundaries
+      const segs=[];
+      let cur=[];
+      for (const p of floorPts) {
+        if (p.is_floor_start && cur.length>0) { segs.push(cur); cur=[]; }
+        cur.push(p);
+        if (p.is_floor_change) { segs.push(cur); cur=[]; }
+      }
+      if (cur.length) segs.push(cur);
+
+      // Catmull-Rom spline: draw smooth curve through screen-space points
+      function splinePath(pts) {
+        if (pts.length < 2) return;
+        if (pts.length === 2) { ctx.moveTo(pts[0][0],pts[0][1]); ctx.lineTo(pts[1][0],pts[1][1]); return; }
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 0; i < pts.length - 1; i++) {
+          const p0 = pts[Math.max(0,i-1)], p1 = pts[i], p2 = pts[i+1], p3 = pts[Math.min(pts.length-1,i+2)];
+          const cp1x = p1[0] + (p2[0]-p0[0])/6;
+          const cp1y = p1[1] + (p2[1]-p0[1])/6;
+          const cp2x = p2[0] - (p3[0]-p1[0])/6;
+          const cp2y = p2[1] - (p3[1]-p1[1])/6;
+          ctx.bezierCurveTo(cp1x,cp1y, cp2x,cp2y, p2[0],p2[1]);
+        }
+      }
+
+      for (const seg of segs) {
+        if (seg.length<2) continue;
+
+        // Split seg at door boundaries into sub-segments
+        const subSegs = []; let cur = [];
+        for (let i=0;i<seg.length;i++) {
+          const pt = seg[i];
+          if (i>0 && (seg[i-1].is_door || pt.is_door)) { subSegs.push({pts:cur,door:true}); cur=[]; }
+          cur.push(pt);
+        }
+        subSegs.push({pts:cur,door:false});
+
+        // Outer glow — smooth
+        for (const ss of subSegs) {
+          if (ss.pts.length<2) continue;
+          ctx.beginPath();
+          ctx.strokeStyle='rgba(27,60,83,0.18)';
+          ctx.lineWidth=22*Math.max(camScale,0.3);
+          ctx.lineJoin='round'; ctx.lineCap='round';
+          splinePath(ss.pts.map(p=>worldToScreen(p.x,p.y)));
+          ctx.stroke();
+        }
+
+        // Main route line — smooth solid / dashed for door connectors
+        for (const ss of subSegs) {
+          if (ss.pts.length<2) continue;
+          ctx.setLineDash([]);
+          if (ss.door) {
+            ctx.setLineDash([5*Math.max(camScale,0.3),4*Math.max(camScale,0.3)]);
+            ctx.strokeStyle='rgba(27,60,83,0.5)';
+            ctx.lineWidth=3.5*Math.max(camScale,0.3);
+          } else {
+            ctx.strokeStyle='#1B3C53';
+            ctx.lineWidth=7*Math.max(camScale,0.3);
+          }
+          ctx.lineJoin='round'; ctx.lineCap='round';
+          ctx.beginPath();
+          splinePath(ss.pts.map(p=>worldToScreen(p.x,p.y)));
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      // Stair/elevator markers
+      for (const p of floorPts) {
+        if (!p.is_floor_change && !p.is_floor_start) continue;
+        const mx2=p.stair_door_x!=null?p.stair_door_x:p.x;
+        const my2=p.stair_door_y!=null?p.stair_door_y:p.y;
+        const [mx,my]=worldToScreen(mx2,my2);
+        const [wx,wy]=worldToScreen(p.x,p.y);
+
+        if (Math.hypot(mx-wx,my-wy)>3) {
+          ctx.setLineDash([4*Math.max(camScale,0.3),4*Math.max(camScale,0.3)]);
+          ctx.strokeStyle='rgba(69,104,130,0.6)';
+          ctx.lineWidth=1.5*Math.max(camScale,0.3);
+          ctx.beginPath(); ctx.moveTo(wx,wy); ctx.lineTo(mx,my); ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        const r=10*Math.max(camScale,0.3);
+        // Shadow
+        ctx.beginPath(); ctx.arc(mx,my,r+2,0,Math.PI*2);
+        ctx.fillStyle='rgba(0,0,0,0.15)'; ctx.fill();
+        // Circle
+        ctx.beginPath(); ctx.arc(mx,my,r,0,Math.PI*2);
+        ctx.fillStyle='#456882'; ctx.fill();
+        ctx.fillStyle='#fff';
+        ctx.font=`bold ${Math.max(10,13*camScale)}px sans-serif`;
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('↕',mx,my);
+
+        if (p.stair_room) {
+          const fs=Math.max(7,9*Math.min(camScale,1.5));
+          ctx.font=`${fs}px 'Courier New',monospace`;
+          ctx.fillStyle='#456882';
+          ctx.textAlign='center'; ctx.textBaseline='top';
+          ctx.fillText(p.stair_room,mx,my+r+2*Math.max(camScale,0.3));
+        }
+      }
+
+      // Door markers (start/end)
+      for (const p of floorPts) {
+        if (!p.is_door) continue;
+        const [sx,sy]=worldToScreen(p.x,p.y);
+        const isStart = p===floorPts[0] || p.room===fromRoom;
+        const color = isStart ? '#f5a623' : '#e53935';
+
+        // Shadow
+        ctx.beginPath(); ctx.arc(sx,sy,14*Math.max(camScale,0.3),0,Math.PI*2);
+        ctx.fillStyle='rgba(0,0,0,0.12)'; ctx.fill();
+        // Outer ring
+        ctx.beginPath(); ctx.arc(sx,sy,12*Math.max(camScale,0.3),0,Math.PI*2);
+        ctx.fillStyle='#fff'; ctx.fill();
+        // Inner dot
+        ctx.beginPath(); ctx.arc(sx,sy,8*Math.max(camScale,0.3),0,Math.PI*2);
+        ctx.fillStyle=color; ctx.fill();
+
+        if (p.room) {
+          const fs=Math.max(9,11*Math.min(camScale,2));
+          ctx.font=`700 ${fs}px -apple-system,sans-serif`;
+          ctx.fillStyle=color;
+          ctx.textAlign='center'; ctx.textBaseline='bottom';
+          ctx.strokeStyle='#fff'; ctx.lineWidth=3;
+          ctx.strokeText(p.room,sx,sy-14*Math.max(camScale,0.3));
+          ctx.fillText(p.room,sx,sy-14*Math.max(camScale,0.3));
+        }
+      }
+    }
+  }
+
+  ctx.restore();
+}
+
+// ── Mobile sheet height ────────────────────────────────────────────────────
+function updateSheetHeight() {
+  if (window.innerWidth>=768) return;
+  const panel = document.getElementById('panel');
+  const h = panel.getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--sheet-h', h+'px');
+}
+
+// ── Autocomplete ───────────────────────────────────────────────────────────
+const SKIP_TYPES=['stairwell','elevator','shaft','elevator shaft'];
+function isSkipType(t){ const tl=(t||'').toLowerCase(); return SKIP_TYPES.some(s=>tl.includes(s)); }
+
+function setupAutocomplete(inputId, dropId, onSelect) {
+  const inp=document.getElementById(inputId);
+  const drop=document.getElementById(dropId);
+  let focusIdx=-1;
+
+  inp.addEventListener('input', () => {
+    const q=inp.value.trim().toLowerCase();
+    if (!q) { drop.classList.remove('show'); return; }
+    const matches=ALL_ROOMS.filter(r => {
+      if (isSkipType(r.type)) return false;
+      return r.id.toLowerCase().includes(q)||(r.type||'').toLowerCase().includes(q);
+    }).sort((a,b) => {
+      const ai=a.id.toLowerCase(), bi=b.id.toLowerCase();
+      if (ai===q&&bi!==q) return -1;
+      if (bi===q&&ai!==q) return 1;
+      if (ai.startsWith(q)&&!bi.startsWith(q)) return -1;
+      if (bi.startsWith(q)&&!ai.startsWith(q)) return 1;
+      return 0;
+    }).slice(0,50);
+    if (!matches.length) { drop.classList.remove('show'); return; }
+    focusIdx=-1;
+    drop.innerHTML=matches.map((r,i)=>
+      `<div class="di" data-id="${r.id}" data-i="${i}">
+        <span class="rid">${r.id}</span>
+        <span class="rinfo">${r.type||''} · F${r.floor_num||r.floor||'?'} · B${r.building||'?'}</span>
+      </div>`
+    ).join('');
+    drop.classList.add('show');
+    drop.querySelectorAll('.di').forEach(el => {
+      el.addEventListener('mousedown', e => {
+        e.preventDefault(); onSelect(el.dataset.id, inp); drop.classList.remove('show');
+      });
+      el.addEventListener('touchend', e => {
+        e.preventDefault(); onSelect(el.dataset.id, inp); drop.classList.remove('show');
+      });
+    });
+  });
+
+  inp.addEventListener('keydown', e => {
+    const items=drop.querySelectorAll('.di');
+    if (e.key==='ArrowDown'){focusIdx=Math.min(focusIdx+1,items.length-1);highlight(items);e.preventDefault();}
+    else if (e.key==='ArrowUp'){focusIdx=Math.max(focusIdx-1,0);highlight(items);e.preventDefault();}
+    else if (e.key==='Enter'){
+      if (focusIdx>=0&&items[focusIdx]){ onSelect(items[focusIdx].dataset.id,inp); drop.classList.remove('show'); }
+    } else if (e.key==='Escape'){ drop.classList.remove('show'); }
+  });
+
+  function highlight(items){
+    items.forEach((el,i)=>el.classList.toggle('focused',i===focusIdx));
+    if(items[focusIdx]) items[focusIdx].scrollIntoView({block:'nearest'});
+  }
+  document.addEventListener('click', e => {
+    if (!inp.contains(e.target)&&!drop.contains(e.target)) drop.classList.remove('show');
+  });
+}
+
+setupAutocomplete('from-inp','from-drop',(id,inp)=>{fromRoom=id;inp.value=id;});
+setupAutocomplete('to-inp','to-drop',(id,inp)=>{toRoom=id;inp.value=id;});
+
+function swapRooms(){
+  [fromRoom,toRoom]=[toRoom,fromRoom];
+  document.getElementById('from-inp').value=fromRoom||'';
+  document.getElementById('to-inp').value=toRoom||'';
+}
+
+// ── Routing engine ─────────────────────────────────────────────────────────
+class MinHeap {
+  constructor() { this.h = []; }
+  push(item) {
+    this.h.push(item);
+    let i = this.h.length - 1;
+    while (i > 0) {
+      const p = (i-1)>>1;
+      if (this.h[p][0] <= this.h[i][0]) break;
+      [this.h[p], this.h[i]] = [this.h[i], this.h[p]]; i = p;
+    }
+  }
+  pop() {
+    const top = this.h[0];
+    const last = this.h.pop();
+    if (this.h.length) {
+      this.h[0] = last; let i = 0;
+      while (true) {
+        let s = i, l = 2*i+1, r = 2*i+2;
+        if (l < this.h.length && this.h[l][0] < this.h[s][0]) s = l;
+        if (r < this.h.length && this.h[r][0] < this.h[s][0]) s = r;
+        if (s === i) break;
+        [this.h[s], this.h[i]] = [this.h[i], this.h[s]]; i = s;
+      }
+    }
+    return top;
+  }
+  get size() { return this.h.length; }
+}
+
+function snapToGrid(roomId) {
+  const r = ROOMS_DATA.find(x => x.id === roomId);
+  if (!r) return [];
+  const rx = r.door_x ?? r.centroid_x ?? 0;
+  const ry = r.door_y ?? r.centroid_y ?? 0;
+  const bld = String(r.building || '21');
+  const flr = parseInt(r.floor_num || r.floor || 0);
+  const candidates = NG2_GRID
+    .filter(n => n.building === bld && n.floor === flr)
+    .map(n => [Math.hypot(n.x - rx, n.y - ry), n.id])
+    .sort((a,b) => a[0]-b[0]);
+  return candidates.length ? [candidates[0][1]] : [];
+}
+
+function dijkstraNG2(fromRoom, toRoom) {
+  const srcNodes = NG2_ROOMS[fromRoom] || snapToGrid(fromRoom);
+  const dstNodes = NG2_ROOMS[toRoom] || snapToGrid(toRoom);
+  if (!srcNodes.length || !dstNodes.length) return null;
+
+  const V_START = '__start__', V_END = '__end__';
+  const extra = {[V_START]: srcNodes.map(id => [id, 0])};
+  for (const id of dstNodes) {
+    if (!extra[id]) extra[id] = [];
+    extra[id].push([V_END, 0]);
+  }
+
+  const dist = {[V_START]: 0};
+  const prev = {};
+  const pq = new MinHeap();
+  pq.push([0, V_START]);
+
+  while (pq.size) {
+    const [d, u] = pq.pop();
+    if (d > (dist[u] ?? Infinity)) continue;
+    if (u === V_END) break;
+    const neighbors = [...(NG2_ADJ[u] || []), ...(extra[u] || [])];
+    for (const [v, w] of neighbors) {
+      const nd = d + w;
+      if (nd < (dist[v] ?? Infinity)) {
+        dist[v] = nd; prev[v] = u;
+        pq.push([nd, v]);
+      }
+    }
+  }
+
+  if (!(V_END in dist)) return null;
+
+  const path = [];
+  let cur = V_END;
+  while (cur in prev) { path.push(cur); cur = prev[cur]; }
+  path.push(V_START);
+  path.reverse();
+  return path.filter(n => n !== V_START && n !== V_END);
+}
+
+function pathToCorridor(nodeIds, fromRoom, toRoom) {
+  const pts = [];
+  for (const nid of nodeIds) {
+    const n = NG2_NODES[nid];
+    if (!n) continue;
+    const pt = {x: n.x, y: n.y, floor: n.floor, building: n.building};
+    if (n.type === 'DOOR') {
+      pt.is_door = true;
+      pt.room = n.room_id || '';
+    } else if (n.type === 'STAIR_LANDING') {
+      pt.is_stair_landing = true;
+      pt.stair_door_x = n.x;
+      pt.stair_door_y = n.y;
+      if (NG2_ELEV_NODES.has(nid)) pt.is_elevator = true;
+    }
+    pts.push(pt);
+  }
+  for (let i = 1; i < pts.length; i++) {
+    if (pts[i-1].floor !== pts[i].floor) {
+      pts[i-1].is_floor_change = true;
+      pts[i].is_floor_start = true;
+    }
+  }
+  return pts;
+}
+
+function smoothCorridor(coords, tol=15, maxJump=120) {
+  if (coords.length <= 2) return coords;
+  const result = [coords[0]];
+  for (let i = 1; i < coords.length - 1; i++) {
+    const p = result[result.length-1], c = coords[i], n = coords[i+1];
+    if (p.floor !== c.floor || c.floor !== n.floor ||
+        c.is_floor_change || c.is_floor_start || c.is_door) {
+      result.push(c); continue;
+    }
+    const jump = Math.hypot(n.x-p.x, n.y-p.y);
+    if (jump > maxJump) { result.push(c); continue; }
+    const dx1=c.x-p.x, dy1=c.y-p.y, dx2=n.x-c.x, dy2=n.y-c.y;
+    const cross = Math.abs(dx1*dy2 - dy1*dx2);
+    const length = Math.max(1, Math.hypot(dx1,dy1));
+    if (cross/length > tol) result.push(c);
+  }
+  result.push(coords[coords.length-1]);
+  return result;
+}
+
+// Directional steps generation
+const SKIP_TYPES_STEPS = ['מדרגות','מעלית','פיר','פרוזדור','מעבר','מבוא','פויאה','פויה','מרפסת','שירותים','שרותי נכים','מחסן'];
+
+function directionalSteps(fromRoomId, toRoomId, corridorCoords) {
+  if (!corridorCoords.length) return [];
+
+  // Group by floor into segments
+  const segs = [];
+  for (const pt of corridorCoords) {
+    if (!segs.length || segs[segs.length-1].floor !== pt.floor)
+      segs.push({floor: pt.floor, pts: []});
+    segs[segs.length-1].pts.push(pt);
+  }
+
+  // Room lookup per floor (only destination rooms, no circulation)
+  const byFloor = {};
+  for (const r of ROOMS_DATA) {
+    const rawType = r.type || '';
+    if (!rawType) continue;
+    if (SKIP_TYPES_STEPS.some(t => rawType.includes(t))) continue;
+    const fl = r.floor_num || r.floor;
+    if (!byFloor[fl]) byFloor[fl] = [];
+    byFloor[fl].push(r);
+  }
+
+  function heading(dx, dy) {
+    return (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+  }
+  function cardinal(deg) {
+    const names = ['east','north-east','north','north-west','west','south-west','south','south-east'];
+    return names[Math.round(deg/45) % 8];
+  }
+  function roomsNearSegment(startPt, endPt, floor) {
+    const sx=startPt.x, sy=startPt.y, ex=endPt.x, ey=endPt.y;
+    const seg2=(ex-sx)**2+(ey-sy)**2;
+    if (seg2 < 1) return [];
+    const near = [];
+    for (const r of (byFloor[floor]||[])) {
+      const rx=r.door_x??r.centroid_x??0, ry=r.door_y??r.centroid_y??0;
+      const t=Math.max(0,Math.min(1,((rx-sx)*(ex-sx)+(ry-sy)*(ey-sy))/seg2));
+      const d=Math.hypot(rx-(sx+t*(ex-sx)), ry-(sy+t*(ey-sy)));
+      if (d < 250) near.push([d, r.id]);
+    }
+    near.sort((a,b)=>a[0]-b[0]);
+    return near.map(x=>x[1]).filter(id=>id!==fromRoomId&&id!==toRoomId).slice(0,3);
+  }
+
+  const fromType = typeEn(ROOMS_DATA.find(r=>r.id===fromRoomId)?.type||'');
+  const toType = typeEn(ROOMS_DATA.find(r=>r.id===toRoomId)?.type||'');
+
+  const steps = [{
+    text: `Start at Room ${fromRoomId}` + (fromType ? ` (${fromType})` : ''),
+    type: 'start', room: fromRoomId
+  }];
+
+  for (let si = 0; si < segs.length; si++) {
+    const {pts, floor} = segs[si];
+    if (pts.length >= 2) {
+      const dx=pts[1].x-pts[0].x, dy=pts[1].y-pts[0].y;
+      const hd = heading(dx, dy);
+      const dirWord = si > 0 ? 'Continue' : 'Head';
+      const near = roomsNearSegment(pts[0], pts[Math.min(6,pts.length-1)], floor);
+      const roomTxt = near.length ? `, past rooms ${near.join(', ')}` : '';
+      steps.push({text:`${dirWord} ${cardinal(hd)}${roomTxt}`, type:'walk', room:null, floor});
+
+      // Detect turns > 35°
+      const sparse = pts.filter((_,i)=>i%5===0).concat([pts[pts.length-1]]);
+      for (let i = 1; i < sparse.length-1; i++) {
+        const p=sparse[i-1], c=sparse[i], n=sparse[i+1];
+        if (p.floor!==c.floor||c.floor!==n.floor) continue;
+        const dx1=c.x-p.x, dy1=c.y-p.y, dx2=n.x-c.x, dy2=n.y-c.y;
+        const cross=dx1*dy2-dy1*dx2, dot=dx1*dx2+dy1*dy2;
+        const mag=Math.max(1,Math.hypot(dx1,dy1)*Math.hypot(dx2,dy2));
+        const ang=Math.acos(Math.max(-1,Math.min(1,dot/mag)))*180/Math.PI;
+        if (ang < 35) continue;
+        const turn = cross < 0 ? 'right' : 'left';
+        const nd = heading(dx2,dy2);
+        const nearT = roomsNearSegment(c, n, floor);
+        const rt = nearT.length ? `, past rooms ${nearT.join(', ')}` : '';
+        steps.push({text:`Turn ${turn} (${cardinal(nd)})${rt}`, type:'walk', room:null, floor});
+      }
+    }
+
+    // Floor change
+    if (si < segs.length-1) {
+      const nf = segs[si+1].floor;
+      const ud = nf > floor ? 'up' : 'down';
+      const useElev = pts.some(p=>p.is_elevator);
+      if (useElev) {
+        steps.push({text:`Take elevator ${ud} to Floor ${nf}`, type:'elevator', room:null, floor:nf});
+      } else {
+        steps.push({text:`Take stairs ${ud} to Floor ${nf}`, type:'stairs', room:null, floor:nf});
+      }
+    }
+  }
+
+  steps.push({
+    text: `You have arrived at Room ${toRoomId}` + (toType ? ` (${toType})` : ''),
+    type: 'arrived', room: toRoomId
+  });
+  return steps;
+}
+
+function computeRoute(fromRoomId, toRoomId) {
+  if (fromRoomId === toRoomId) {
+    return {corridor_path:[], steps:[{text:'You are already here!', type:'arrived', room:fromRoomId}], num_corridors:0, floor_changes:0};
+  }
+  if (!NG2_ROOMS[fromRoomId] && !snapToGrid(fromRoomId).length)
+    throw new Error(`Room '${fromRoomId}' not found`);
+  if (!NG2_ROOMS[toRoomId] && !snapToGrid(toRoomId).length)
+    throw new Error(`Room '${toRoomId}' not found`);
+
+  const nodeIds = dijkstraNG2(fromRoomId, toRoomId);
+  if (!nodeIds) throw new Error('No route found between these rooms');
+
+  const raw = pathToCorridor(nodeIds, fromRoomId, toRoomId);
+  const corridor_path = smoothCorridor(raw);
+
+  const floors = [];
+  let prevF = null;
+  for (const pt of corridor_path) {
+    if (pt.floor !== prevF) { floors.push(pt.floor); prevF = pt.floor; }
+  }
+  const floor_changes = floors.length - 1;
+  const steps = directionalSteps(fromRoomId, toRoomId, corridor_path);
+
+  return {from_room:fromRoomId, to_room:toRoomId, corridor_path, num_corridors:corridor_path.length, floor_changes, steps};
+}
+
+// ── Route finding ──────────────────────────────────────────────────────────
+async function findRoute() {
+  const fi=document.getElementById('from-inp').value.trim();
+  const ti=document.getElementById('to-inp').value.trim();
+  if (fi) fromRoom=fi;
+  if (ti) toRoom=ti;
+
+  const err=document.getElementById('error-banner');
+  err.style.display='none';
+
+  if (!fromRoom||!toRoom){
+    err.textContent='Please select both a starting room and destination.';
+    err.style.display=''; return;
+  }
+
+  const btn=document.getElementById('route-btn');
+  const btnText=document.getElementById('route-btn-text');
+  btn.disabled=true;
+  btnText.innerHTML='<span class="spinner"></span> Finding route...';
+
+  try {
+    const data = computeRoute(fromRoom, toRoom);
+    routeData=data;
+    renderDirections(data);
+    if (data.corridor_path?.length>0) {
+      await switchFloor(data.corridor_path[0].floor);
+    }
+    drawMap();
+    setTimeout(updateSheetHeight,50);
+  } catch(e) {
+    err.textContent=e.message;
+    err.style.display='';
+  } finally {
+    btn.disabled=false;
+    btnText.textContent='Find Route';
+  }
+}
+
+function closeDirections(){
+  routeData=null;
+  document.getElementById('directions-card').style.display='none';
+  drawMap();
+  setTimeout(updateSheetHeight,50);
+}
+
+function renderDirections(data){
+  const summary=document.getElementById('summary');
+  const stepsEl=document.getElementById('steps-list');
+  const card=document.getElementById('directions-card');
+
+  const fc=data.floor_changes||0;
+  const nc=data.num_corridors||0;
+  const floors=[];
+  let pf=null;
+  for (const p of (data.corridor_path||[])){
+    if(p.floor!==pf){floors.push(p.floor);pf=p.floor;}
+  }
+
+  summary.innerHTML=`
+    <span class="chip blue">${nc} waypoints</span>
+    <span class="chip ${fc>0?'orange':'green'}">${fc} floor change${fc!==1?'s':''}</span>
+    ${fc>0?`<span class="chip" style="font-size:10px;color:var(--muted)">${floors.join(' → ')}</span>`:''}
+  `;
+
+  const ICONS={start:'📍',walk:'→',stairs:'↕',elevator:'🛗',arrived:'🏁'};
+  stepsEl.innerHTML=(data.steps||[]).map(s=>{
+    let fl='';
+    if ((s.type==='stairs'||s.type==='elevator')&&s.floor!=null){
+      fl=`<span class="floor-link" onclick="switchFloor(${s.floor})">View floor ${s.floor} →</span>`;
+    }
+    return `<div class="step-item">
+      <div class="step-ico ${s.type}">${ICONS[s.type]||'•'}</div>
+      <div class="step-text">${escHtml(s.text)}${fl}</div>
+    </div>`;
+  }).join('');
+
+  card.style.display='block';
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+async function init() {
+  await loadAllData();
+  setupCanvas();
+  drawMap();
+  updateSheetHeight();
+}
+init();
+</script>
+</body>
+</html>
