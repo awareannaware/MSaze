@@ -152,20 +152,37 @@ def instructions(path, etypes):
 def health():
     return {"status":"ok","rooms":len(NODES),"edges":len(GRAPH["edges"])}
 
-STAIR_TYPES = ("מדרגות", "מעלית", "פיר")
+STAIR_TYPES = ("מדרגות", "מעלית", "פיר", "שירותים", "שרותי נכים",
+               "פרוזדור", "מעבר", "מבוא", "פויאה", "פויה", "מרפסת", "מחסן", "חדר מדרגות")
+
+DEPARTMENTS = [
+    {"id": "dept-management", "name": "Management Department", "building": "21", "floor": "", "type": "Department"},
+    {"id": "dept-economics",  "name": "Economics Department",  "building": "22", "floor": "", "type": "Department"},
+]
+# Map department IDs → the nav_graph2 room_id to route to
+DEPT_ROOM_MAP = {
+    "dept-management": "management_entrance",
+    "dept-economics":  "economics_entrance",
+}
 
 @app.get("/api/rooms")
 def get_rooms(q:str=""):
     seen=set(); results=[]
-    for n in GRAPH["nodes"]:
-        if n["id"] in seen: continue
-        seen.add(n["id"])
+    for n in _rooms_data:
+        rid = str(n.get("id",""))
+        if rid in seen: continue
+        seen.add(rid)
         raw_type = n.get("type","")
         if any(s in raw_type for s in STAIR_TYPES): continue
+        if n.get("floor") == 6: continue  # floor 6 hidden
         rt=type_en(raw_type)
-        if q and q.lower() not in n["id"].lower() and q.lower() not in rt.lower(): continue
-        floor_val = n.get("floor_num") or n.get("floor","")
-        results.append({"id":n["id"],"type":rt,"building":n.get("building",""),"floor":floor_val,"floor_num":floor_val})
+        if q and q.lower() not in rid.lower() and q.lower() not in rt.lower(): continue
+        floor_val = n.get("floor","")
+        results.append({"id":rid,"type":rt,"building":n.get("building",""),"floor":floor_val,"floor_num":floor_val})
+    # Add departments (matched by name)
+    for d in DEPARTMENTS:
+        if not q or q.lower() in d["name"].lower() or q.lower() in d["type"].lower():
+            results.insert(0, {**d, "floor_num": d["floor"]})
     return results
 
 @app.get("/api/rooms/{room_id}")
@@ -703,7 +720,7 @@ def _snap_to_corridor(door_x, door_y, bldg, floor_num, k=5, max_snap=700):
     return result  # [(dist, idx), ...]
 
 
-def _smooth_corridor(coords, tol=15, max_jump=120):
+def _smooth_corridor(coords, tol=90, max_jump=400):
     """Remove near-collinear intermediate corridor points.
 
     Parameters chosen conservatively:
@@ -899,7 +916,7 @@ def _ng2_path_to_corridor(node_ids: list, from_room: str, to_room: str) -> list:
         if n["type"] == "DOOR":
             pt["is_door"] = True
             rid = n.get("room_id", "")
-            pt["room"] = rid if rid in (from_room, to_room) else rid
+            pt["room"] = rid if rid in (from_room, to_room) else ""
         elif n["type"] == "STAIR_LANDING":
             pt["is_stair_landing"] = True
             pt["stair_door_x"] = n["x"]
@@ -921,6 +938,9 @@ def _ng2_path_to_corridor(node_ids: list, from_room: str, to_room: str) -> list:
 @app.get("/api/route5")
 def get_route5(from_room: str, to_room: str, request: Request):
     """nav_graph2-based routing."""
+    # Resolve department IDs to their entrance room
+    from_room = DEPT_ROOM_MAP.get(from_room, from_room)
+    to_room   = DEPT_ROOM_MAP.get(to_room,   to_room)
     if from_room not in _NG2_ROOMS and not _snap_to_grid(from_room):
         raise HTTPException(404, f"Room '{from_room}' not found in nav_graph2")
     if to_room not in _NG2_ROOMS and not _snap_to_grid(to_room):
