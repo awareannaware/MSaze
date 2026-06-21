@@ -662,8 +662,8 @@ def _directional_steps(from_room, to_room, corridor_coords, node_path=None):
                 dot=dx1*dx2+dy1*dy2
                 mag=max(1,(dx1**2+dy1**2)**0.5*(dx2**2+dy2**2)**0.5)
                 ang=math.degrees(math.acos(max(-1,min(1,dot/mag))))
-                if ang < 65: continue
-                sharp_turns.append(("right" if cross < 0 else "left", c, n))
+                if ang < 80: continue
+                sharp_turns.append(("left" if cross < 0 else "right", c, n))
 
             # Collapse consecutive same-direction turns into one
             merged = []
@@ -676,13 +676,13 @@ def _directional_steps(from_room, to_room, corridor_coords, node_path=None):
             if not merged:
                 # No sharp turns — just one "go straight" step
                 # Skip first 25% of pts (elevator exit area), use wider radius for long corridors
-                near = rooms_near_segment(pts[0], pts[-1], floor, radius=300, skip_first_frac=0.25)
+                near = rooms_near_segment(pts[0], pts[-1], floor, radius=380, skip_first_frac=0.25)
                 room_txt = f", passing room{'s' if len(near)>1 else ''} {', '.join(near)}" if near else ""
                 action = "Continue straight" if si > 0 else "Go straight"
                 steps.append({"text": f"{action}{room_txt}", "type":"walk","room":None,"floor":floor})
             else:
                 # First segment before first turn
-                near = rooms_near_segment(pts[0], merged[0][1], floor, radius=300, skip_first_frac=0.25, end_frac=0.65)
+                near = rooms_near_segment(pts[0], merged[0][1], floor, radius=380, skip_first_frac=0.25, end_frac=0.65)
                 room_txt = f", passing room{'s' if len(near)>1 else ''} {', '.join(near)}" if near else ""
                 action = "Continue straight" if si > 0 else "Go straight"
                 steps.append({"text": f"{action}{room_txt}", "type":"walk","room":None,"floor":floor})
@@ -750,7 +750,7 @@ def _directional_steps(from_room, to_room, corridor_coords, node_path=None):
                     steps.append({"text": f"Take the stairs {ud} to Floor {nf}", "type": "stairs", "room": None, "floor": nf})
 
     to_type=type_en(tr_n.get("type",""))
-    steps.append({"text": f"You have arrived at Room {to_room}" + (f" ({to_type})" if to_type else ""), "type":"arrived","room":to_room})
+    steps.append({"text": f"Room {to_room} is on your right" + (f" ({to_type})" if to_type else ""), "type":"arrived","room":to_room})
 
     # Post-process: remove "Go straight" steps that appear immediately before a dept-direction step
     cleaned = []

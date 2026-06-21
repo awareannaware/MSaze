@@ -1205,7 +1205,7 @@ function setAuthState(isAuthed) {
     }
 
     const SKIP_TYPES = ["מדרגות","מעלית","פיר","שירותים","שרותי נכים","פרוזדור","מעבר","מבוא","פויאה","פויה","מרפסת","מחסן","חדר מדרגות"];
-    const rooms = (data.rooms || []).filter(r => (String(r.building) === '21' || String(r.building) === '22') && r.x && r.y && !SKIP_TYPES.some(s => (r.type||'').includes(s)));
+    const rooms = (data.rooms || []).filter(r => (String(r.building) === '21' || String(r.building) === '22') && r.x && r.y && r.id !== '22301' && !SKIP_TYPES.some(s => (r.type||'').includes(s)));
     html += `<g class="room-labels">` + rooms.map(r => `<text x="${r.x}" y="${r.y}" transform="${flipTxt(r.x)}" text-anchor="middle" font-size="95" font-weight="800" fill="#0f172a" opacity=".72">${esc(r.id)}</text>`).join('') + `</g>`;
     if(Number(floor) === 3){
       const vx = 265, vy = 4484;
@@ -1293,10 +1293,7 @@ function setAuthState(isAuthed) {
       if(metric3Label) metric3Label.textContent = 'Floor changes';
 
       const steps = (activeRoute.steps || []).map(s => typeof s === 'string' ? s : s.text).filter(Boolean);
-      const extra = [];
-      if(Number(dest.floor) === 3) extra.push('From Cafe Vitamin, enter Building 21 through the sliding doors on the 3rd floor.');
-      if(Number(dest.floor) > 3) extra.push('From Cafe Vitamin, enter Building 21 through the sliding doors on the 3rd floor.');
-      const allSteps = [...extra, ...steps];
+      const allSteps = [...steps];
       const stepsBox = el('steps');
       if(stepsBox) stepsBox.innerHTML = allSteps.map(s => `<div class="step"><p>${esc(s)}</p></div>`).join('');
       hideSuggestions();
