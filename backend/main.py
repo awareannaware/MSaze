@@ -563,11 +563,33 @@ def _get_c3_node(room_id, floor_hint=None):
     if idx is None: return None
     return (bldg, int(floor), int(idx))
 
-def _directional_steps(from_room, to_room, corridor_coords):
+# Known friendly room names (room_id → display name)
+_ROOM_FRIENDLY: dict = {
+    "22301": "Cafe Vitamin",
+}
+
+# Staircase nodes that require entering a department first
+# node_id → instruction to show before the floor-change step
+_DEPT_STAIR_ENTRY: dict = {
+    "S-22-F3-22227": ("Enter the Economics Department through the sliding door", "Turn right to the elevator"),
+    "S-22-F2-22227": ("Enter the Economics Department through the sliding door", "Turn right to the elevator"),
+    "D-21-F3-23": ("Enter the Management Department through the sliding door", "Turn right to the elevator"),
+    "CONN-21-F3-bld": ("Enter the Management Department through the sliding door", "Turn right to the elevator"),
+    "CONN-21-F2-bld": ("Enter the Management Department through the sliding door", "Turn right to the elevator"),
+}
+
+def _directional_steps(from_room, to_room, corridor_coords, node_path=None):
     """Generate turn-by-turn walking directions from corridor path."""
     if not corridor_coords:
         return []
     fr_n = NODES.get(from_room, {}); tr_n = NODES.get(to_room, {})
+
+    # Detect department staircase nodes in the route
+    dept_entries = set()
+    if node_path:
+        for nid in node_path:
+            if nid in _DEPT_STAIR_ENTRY:
+                dept_entries.add(nid)
 
     # Group by floor
     segs = []
@@ -585,41 +607,52 @@ def _directional_steps(from_room, to_room, corridor_coords):
         if not any(t in n.get("type","") for t in SKIP_T) and n.get("type",""):
             by_floor[fl].append(n)
 
-    def heading(dx, dy):  # degrees, 0=east, 90=north
-        return math.degrees(math.atan2(dy, dx)) % 360
+    # Types to skip in "passing rooms" — not useful navigation landmarks
+    _SKIP_TYPES = {"פיר", "מבוא", "שירותים", "שירותים נשים", "שירותים גברים", "מחסן", "מד\"א"}
 
-    def cardinal(deg):
-        names = ["east","north-east","north","north-west","west","south-west","south","south-east"]
-        return names[round(deg/45) % 8]
+    def rooms_near_segment(start_pt, end_pt, floor, radius=250, skip_first_frac=0.0, end_frac=1.0):
+        seg_pts = [p for p in corridor_coords if p.get("floor") == floor]
+        def pt_idx(pt):
+            return next((i for i,p in enumerate(seg_pts) if abs(p["x"]-pt["x"])<1 and abs(p["y"]-pt["y"])<1), None)
+        i0 = pt_idx(start_pt); i1 = pt_idx(end_pt)
+        if i0 is None or i1 is None:
+            i0, i1 = 0, len(seg_pts)-1
+        if i0 > i1: i0, i1 = i1, i0
+        span = i1 - i0
+        skip_n = int(span * skip_first_frac)
+        end_n = i0 + skip_n + max(1, int(span * end_frac))
+        check_pts = seg_pts[i0 + skip_n : end_n] or seg_pts[i0:i1+1]
+        floor_rooms = [r for r in by_floor.get(floor,[])
+                       if r.get("type","") not in _SKIP_TYPES
+                       and (r.get("door_x") or r.get("x")) is not None]
+        # Walk the path in order; pick rooms as you first pass within radius
+        seen = set(); result = []
+        for p in check_pts:
+            if len(result) >= 3: break
+            nearby = []
+            for r in floor_rooms:
+                rid = r["id"]
+                if rid in seen or rid in (from_room, to_room): continue
+                rx,ry = r.get("door_x") or r.get("x"), r.get("door_y") or r.get("y")
+                d = math.hypot(rx - p["x"], ry - p["y"])
+                if d < radius:
+                    nearby.append((d, rid))
+            for d, rid in sorted(nearby):
+                if rid not in seen:
+                    seen.add(rid); result.append(rid)
+                    if len(result) >= 3: break
+        return result
 
-    def rooms_near_segment(start_pt, end_pt, floor):
-        sx,sy = start_pt["x"],start_pt["y"]; ex,ey = end_pt["x"],end_pt["y"]
-        seg2 = (ex-sx)**2+(ey-sy)**2
-        if seg2 < 1: return []
-        near=[]
-        for r in by_floor.get(floor,[]):
-            rx,ry = r.get("door_x",r.get("x",0)), r.get("door_y",r.get("y",0))
-            t = max(0,min(1,((rx-sx)*(ex-sx)+(ry-sy)*(ey-sy))/seg2))
-            d = math.hypot(rx-(sx+t*(ex-sx)), ry-(sy+t*(ey-sy)))
-            if d < 250: near.append((d, r["id"]))
-        near.sort(); return [r for _,r in near if r not in (from_room,to_room)][:3]
-
-    steps = [{"text": f"Start at Room {from_room}" + (f" ({type_en(fr_n.get('type',''))})" if fr_n.get('type') else ""), "type":"start","room":from_room}]
+    fr_friendly = _ROOM_FRIENDLY.get(from_room) or type_en(fr_n.get("type","")) or f"Room {from_room}"
+    steps = [{"text": f"You are at {fr_friendly}", "type":"start","room":from_room}]
 
     for si, seg in enumerate(segs):
         pts = seg["pts"]; floor = seg["floor"]
 
         if len(pts) >= 2:
-            # Initial direction
-            dx = pts[1]["x"]-pts[0]["x"]; dy = pts[1]["y"]-pts[0]["y"]
-            hd = heading(dx, dy)
-            dir_word = "Continue" if si > 0 else "Head"
-            near = rooms_near_segment(pts[0], pts[min(6,len(pts)-1)], floor)
-            room_txt = f", past rooms {', '.join(near)}" if near else ""
-            steps.append({"text": f"{dir_word} {cardinal(hd)}{room_txt}", "type":"walk","room":None,"floor":floor})
-
-            # Detect significant turns (> 35 deg) along simplified waypoints
-            sparse = pts[::5] + [pts[-1]]
+            # Only detect SHARP turns (> 65 deg) — ignore gentle curves
+            sparse = pts[::4] + [pts[-1]]
+            sharp_turns = []
             for i in range(1, len(sparse)-1):
                 p=sparse[i-1]; c=sparse[i]; n=sparse[i+1]
                 if p["floor"]!=c["floor"] or c["floor"]!=n["floor"]: continue
@@ -629,38 +662,105 @@ def _directional_steps(from_room, to_room, corridor_coords):
                 dot=dx1*dx2+dy1*dy2
                 mag=max(1,(dx1**2+dy1**2)**0.5*(dx2**2+dy2**2)**0.5)
                 ang=math.degrees(math.acos(max(-1,min(1,dot/mag))))
-                if ang < 35: continue
-                turn = "right" if cross < 0 else "left"
-                nd=heading(dx2,dy2)
-                near_t=rooms_near_segment(c,n,floor)
-                rt=f", past rooms {', '.join(near_t)}" if near_t else ""
-                steps.append({"text":f"Turn {turn} ({cardinal(nd)}){rt}","type":"walk","room":None,"floor":floor})
+                if ang < 65: continue
+                sharp_turns.append(("right" if cross < 0 else "left", c, n))
+
+            # Collapse consecutive same-direction turns into one
+            merged = []
+            for turn, c, n in sharp_turns:
+                if merged and merged[-1][0] == turn:
+                    merged[-1] = (turn, merged[-1][1], n)  # extend
+                else:
+                    merged.append((turn, c, n))
+
+            if not merged:
+                # No sharp turns — just one "go straight" step
+                # Skip first 25% of pts (elevator exit area), use wider radius for long corridors
+                near = rooms_near_segment(pts[0], pts[-1], floor, radius=300, skip_first_frac=0.25)
+                room_txt = f", passing room{'s' if len(near)>1 else ''} {', '.join(near)}" if near else ""
+                action = "Continue straight" if si > 0 else "Go straight"
+                steps.append({"text": f"{action}{room_txt}", "type":"walk","room":None,"floor":floor})
+            else:
+                # First segment before first turn
+                near = rooms_near_segment(pts[0], merged[0][1], floor, radius=300, skip_first_frac=0.25, end_frac=0.65)
+                room_txt = f", passing room{'s' if len(near)>1 else ''} {', '.join(near)}" if near else ""
+                action = "Continue straight" if si > 0 else "Go straight"
+                steps.append({"text": f"{action}{room_txt}", "type":"walk","room":None,"floor":floor})
+                # Each sharp turn
+                for turn, c, n in merged:
+                    near_t = rooms_near_segment(c, n, floor)
+                    rt = f", passing room{'s' if len(near_t)>1 else ''} {', '.join(near_t)}" if near_t else ""
+                    steps.append({"text":f"Turn {turn}{rt}","type":"walk","room":None,"floor":floor})
 
         # Floor change to next segment
         if si < len(segs)-1:
             nf=segs[si+1]["floor"]
             ud="up" if nf>floor else "down"
-            # Check if this floor change uses elevator
             last_pts = segs[si]["pts"]
             use_elev = any(p.get("is_elevator") for p in last_pts)
-            # For elevator: skip intermediate stops, jump to final floor in this elevator run
-            if use_elev:
-                final_floor = nf
-                j = si + 1
-                while j < len(segs) - 1 and any(p.get("is_elevator") for p in segs[j]["pts"]):
-                    final_floor = segs[j+1]["floor"]
-                    j += 1
-                if final_floor != nf:
-                    # Will be handled when we reach the last elevator seg — skip intermediate
-                    pass
-                else:
-                    steps.append({"text":f"Take elevator {ud} to Floor {final_floor}","type":"elevator","room":None,"floor":final_floor})
+            # Department entry check
+            dept_entry_txt = None
+            dept_elev_turn = None
+            for dept_nid in list(dept_entries):
+                entry_val = _DEPT_STAIR_ENTRY[dept_nid]
+                dept_entry_txt, dept_elev_turn = entry_val if isinstance(entry_val, tuple) else (entry_val, None)
+                dept_entries.discard(dept_nid)
+                break
+
+            # When going through a department, always use elevator
+            mode = "elevator" if (use_elev or dept_entry_txt) else "stairs"
+
+            if dept_entry_txt:
+                # Last walk step: if it's "Go straight", remove it (dept turn replaces it)
+                # Otherwise turn it into "Turn X and go to the [Dept]"
+                dept_name = dept_entry_txt.replace("Enter the ", "").split(" through")[0]
+                if steps and steps[-1]["type"] == "walk":
+                    last_txt = steps[-1]["text"]
+                    if last_txt == "Go straight":
+                        steps.pop()
+                    elif last_txt.startswith("Turn "):
+                        direction_part = last_txt.split(",")[0]
+                        steps[-1]["text"] = f"{direction_part} and go to the {dept_name}"
+                    else:
+                        steps[-1]["text"] = last_txt + f" and go to the {dept_name}"
+                # Enter dept step
+                steps.append({"text": dept_entry_txt, "type": "walk", "room": None, "floor": floor})
+                # Turn to elevator inside dept
+                if dept_elev_turn:
+                    steps.append({"text": dept_elev_turn, "type": "walk", "room": None, "floor": floor})
+                # Floor change — always elevator when going through dept
+                steps.append({"text": f"Take the elevator {ud} to Floor {nf}", "type": "elevator", "room": None, "floor": nf})
+                # After elevator, note building direction if route crosses buildings
+                from_bld = fr_n.get("building")
+                dest_bld = tr_n.get("building")
+                if from_bld and dest_bld and from_bld != dest_bld:
+                    steps.append({"text": f"Go to Building {dest_bld} — it's on your left side", "type": "walk", "room": None, "floor": nf})
             else:
-                steps.append({"text":f"Take stairs {ud} to Floor {nf}","type":"stairs","room":None,"floor":nf})
+                # No dept — append stair hint to last walk step then floor change
+                if steps and steps[-1]["type"] == "walk":
+                    steps[-1]["text"] += f" — you will see the {mode} ahead"
+                if use_elev:
+                    final_floor = nf
+                    j = si + 1
+                    while j < len(segs) - 1 and any(p.get("is_elevator") for p in segs[j]["pts"]):
+                        final_floor = segs[j+1]["floor"]
+                        j += 1
+                    steps.append({"text": f"Take the elevator {ud} to Floor {final_floor}", "type": "elevator", "room": None, "floor": final_floor})
+                else:
+                    steps.append({"text": f"Take the stairs {ud} to Floor {nf}", "type": "stairs", "room": None, "floor": nf})
 
     to_type=type_en(tr_n.get("type",""))
     steps.append({"text": f"You have arrived at Room {to_room}" + (f" ({to_type})" if to_type else ""), "type":"arrived","room":to_room})
-    return steps
+
+    # Post-process: remove "Go straight" steps that appear immediately before a dept-direction step
+    cleaned = []
+    for idx, s in enumerate(steps):
+        if s["text"] == "Go straight" and idx + 1 < len(steps):
+            next_txt = steps[idx + 1]["text"]
+            if "and go to the" in next_txt or "Enter the" in next_txt:
+                continue  # skip this "Go straight"
+        cleaned.append(s)
+    return cleaned
 
 
 # ── Stairwell door lookup (for snapping floor-change corridor pts) ─────────────
@@ -962,7 +1062,7 @@ def get_route5(from_room: str, to_room: str, request: Request):
             prev_f = pt["floor"]
     floor_changes = len(floors_seq) - 1
 
-    steps = _directional_steps(from_room, to_room, corridor_path)
+    steps = _directional_steps(from_room, to_room, corridor_path, node_path=node_path)
     _log_search(from_room, to_room, floor_changes, request.client.host if request.client else "")
 
     return {
@@ -1117,7 +1217,7 @@ def get_route4(from_room: str, to_room: str, request: Request):
     _log_search(from_room, to_room, floor_changes, request.client.host if request.client else "")
 
     return {"from_room": from_room, "to_room": to_room,
-            "corridor_path": corridor_path,
+            "corridor_path":  corridor_path,
             "num_corridors": len(corridor_path),
             "floor_changes": floor_changes, "steps": steps,
             "adj_used": "cross_building" if from_bldg != to_bldg else "same_building",
