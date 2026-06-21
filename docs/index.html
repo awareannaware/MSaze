@@ -1131,7 +1131,7 @@ function setAuthState(isAuthed) {
   }
 
   function marker(x, y, color, label){
-    const showLabel = label ? `<text x="${x}" y="${y-75}" text-anchor="middle" font-size="65" font-weight="800" fill="${color}">${esc(label)}</text>` : '';
+    const showLabel = label ? `<text x="${x}" y="${y-75}" transform="translate(${x},0) scale(-1,1) translate(${-x},0)" text-anchor="middle" font-size="65" font-weight="800" fill="${color}">${esc(label)}</text>` : '';
     return `<g class="marker">
       <circle cx="${x}" cy="${y}" r="38" fill="${color}" opacity=".22"/>
       <circle cx="${x}" cy="${y}" r="20" fill="${color}"/>
@@ -1182,7 +1182,15 @@ function setAuthState(isAuthed) {
       end:   [w.end[0]+B22_DX,   w.end[1]+B22_DY]
     }));
     const walls = [...wallsB21, ...wallsB22];
+
+    // Horizontal flip: DXF X-axis is mirrored relative to the real building layout.
+    // All geometry is wrapped in a flip group; text elements get a counter-transform to stay readable.
+    const C = b.x_min + b.x_max; // flip constant: flipped_x = C - original_x
+    const flipTxt = (x) => `translate(${x},0) scale(-1,1) translate(${-x},0)`;
+
     let html = `<rect x="${x0}" y="${y0}" width="${w}" height="${h}" rx="120" fill="#f8fbfb"/>`;
+    html += `<g transform="translate(${C},0) scale(-1,1)">`;
+
     html += `<g opacity=".92" stroke="#263642" stroke-width="18" stroke-linecap="round">` + walls.map(line => {
       const s = line.start || [0,0], e = line.end || [0,0];
       return `<line x1="${s[0]}" y1="${s[1]}" x2="${e[0]}" y2="${e[1]}"/>`;
@@ -1198,10 +1206,14 @@ function setAuthState(isAuthed) {
 
     const SKIP_TYPES = ["מדרגות","מעלית","פיר","שירותים","שרותי נכים","פרוזדור","מעבר","מבוא","פויאה","פויה","מרפסת","מחסן","חדר מדרגות"];
     const rooms = (data.rooms || []).filter(r => (String(r.building) === '21' || String(r.building) === '22') && r.x && r.y && !SKIP_TYPES.some(s => (r.type||'').includes(s)));
-    html += `<g class="room-labels">` + rooms.map(r => `<text x="${r.x}" y="${r.y}" text-anchor="middle" font-size="95" font-weight="800" fill="#0f172a" opacity=".72">${esc(r.id)}</text>`).join('') + `</g>`;
+    html += `<g class="room-labels">` + rooms.map(r => `<text x="${r.x}" y="${r.y}" transform="${flipTxt(r.x)}" text-anchor="middle" font-size="95" font-weight="800" fill="#0f172a" opacity=".72">${esc(r.id)}</text>`).join('') + `</g>`;
     if(Number(floor) === 3){
-      html += `<rect x="430" y="4540" width="340" height="130" rx="20" fill="#c27c3a" opacity=".9"/><text x="600" y="4625" text-anchor="middle" font-size="90" font-weight="900" fill="#fff">Vitamin</text>`;
+      const vx = 265, vy = 4484;
+      html += `<rect x="${vx-170}" y="${vy+56}" width="340" height="130" rx="20" fill="#c27c3a" opacity=".9"/>`;
+      html += `<text x="${vx}" y="${vy+141}" transform="${flipTxt(vx)}" text-anchor="middle" font-size="90" font-weight="900" fill="#fff">Vitamin</text>`;
     }
+
+    html += `</g>`; // end flip group
     overlay.innerHTML = html;
 
     if(typeof fitFloor === 'function') fitFloor();
