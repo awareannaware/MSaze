@@ -165,6 +165,10 @@ DEPT_ROOM_MAP = {
     "dept-economics":  "economics_entrance",
 }
 
+_EXCLUDED_ROOMS: set = {
+    "21212", "21213", "21232", "21233", "21236", "21237", "21238", "21246", "21248",
+}
+
 @app.get("/api/rooms")
 def get_rooms(q:str=""):
     seen=set(); results=[]
@@ -172,6 +176,7 @@ def get_rooms(q:str=""):
         rid = str(n.get("id",""))
         if rid in seen: continue
         seen.add(rid)
+        if rid in _EXCLUDED_ROOMS: continue
         raw_type = n.get("type","")
         if any(s in raw_type for s in STAIR_TYPES): continue
         if n.get("floor") == 6: continue  # floor 6 hidden
@@ -567,6 +572,28 @@ def _get_c3_node(room_id, floor_hint=None):
 _ROOM_FRIENDLY: dict = {
     "22301": "Cafe Vitamin",
 }
+
+_B21_F2_ROOMS: set = {
+    "21134", "21150", "21201", "21202", "21203", "21204", "21205",
+    "21206", "21207", "21208",
+}
+
+_B21_F2_STEP5: dict = {
+    "21201": "From the base of the stairs, continue straight to the door of Room 21201. Appropriate signage will appear above the door.",
+    "21208": "After the stairs, turn left and continue straight all the way until you reach Room 21208. Appropriate signage will appear above the door.",
+}
+
+def _manual_route_steps(from_room: str, to_room: str):
+    if from_room == "22301" and to_room in _B21_F2_ROOMS:
+        step5_text = _B21_F2_STEP5.get(to_room, f"Turn left and go straight to Room {to_room}. Appropriate signage will appear above the door.")
+        return [
+            {"text": "You are at Cafe Vitamin", "type": "start", "room": "22301", "floor": 3},
+            {"text": "Turn left and go to the Management Department", "type": "walk", "room": None, "floor": 3},
+            {"text": "Take the stairs near the entrance to the Management Department", "type": "stairs", "room": None, "floor": 2},
+            {"text": "There is a cooler and restrooms on your right and a seating area with tables on your left", "type": "walk", "room": None, "floor": 2},
+            {"text": step5_text, "type": "arrived", "room": to_room, "floor": 2},
+        ]
+    return None
 
 # Staircase nodes that require entering a department first
 # node_id → instruction to show before the floor-change step
@@ -1089,7 +1116,7 @@ def get_route5(from_room: str, to_room: str, request: Request):
             prev_f = pt["floor"]
     floor_changes = len(floors_seq) - 1
 
-    steps = _directional_steps(from_room, to_room, corridor_path, node_path=node_path)
+    steps = _manual_route_steps(from_room, to_room) or _directional_steps(from_room, to_room, corridor_path, node_path=node_path)
     _log_search(from_room, to_room, floor_changes, request.client.host if request.client else "")
 
     return {
