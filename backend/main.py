@@ -646,7 +646,10 @@ def _directional_steps(from_room, to_room, corridor_coords, node_path=None):
     fr_friendly = _ROOM_FRIENDLY.get(from_room) or type_en(fr_n.get("type","")) or f"Room {from_room}"
     steps = [{"text": f"You are at {fr_friendly}", "type":"start","room":from_room}]
 
+    _skip_segs: set = set()
     for si, seg in enumerate(segs):
+        if si in _skip_segs:
+            continue
         pts = seg["pts"]; floor = seg["floor"]
 
         if len(pts) >= 2:
@@ -728,8 +731,14 @@ def _directional_steps(from_room, to_room, corridor_coords, node_path=None):
                 # Turn to elevator inside dept
                 if dept_elev_turn:
                     steps.append({"text": dept_elev_turn, "type": "walk", "room": None, "floor": floor})
-                # Floor change — always elevator when going through dept
-                steps.append({"text": f"Take the elevator {ud} to Floor {nf}", "type": "elevator", "room": None, "floor": nf})
+                # Floor change — always elevator when going through dept; merge consecutive elevator floors
+                final_nf = nf
+                j = si + 1
+                while j < len(segs) - 1 and any(p.get("is_elevator") for p in segs[j]["pts"]):
+                    final_nf = segs[j + 1]["floor"]
+                    _skip_segs.add(j)
+                    j += 1
+                steps.append({"text": f"Take the elevator {ud} to Floor {final_nf}", "type": "elevator", "room": None, "floor": final_nf})
                 # After elevator, note building direction if route crosses buildings
                 from_bld = fr_n.get("building")
                 dest_bld = tr_n.get("building")
@@ -1039,6 +1048,8 @@ def _ng2_path_to_corridor(node_ids: list, from_room: str, to_room: str) -> list:
             pt["stair_door_y"] = n["y"]
             if nid in _NG2_ELEV_NODES:
                 pt["is_elevator"] = True
+        elif n["type"] == "CONNECTION" and "-bld" in nid:
+            pt["is_elevator"] = True
         pts.append(pt)
 
     for i, pt in enumerate(pts):
