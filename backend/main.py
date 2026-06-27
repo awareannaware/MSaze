@@ -889,12 +889,16 @@ for _n in _NG2["nodes"]:
 
 _NG2_ADJ: dict = _defaultdict(list)
 _NG2_ELEV_NODES: set = set()  # node IDs that are part of an ELEVATOR edge
+_CONN_FLOOR_CHANGE_PAIRS: set = set()  # (from, to) CONN-CONN floor-change edges
 for _e in _NG2["edges"]:
     _NG2_ADJ[_e["from"]].append((_e["to"],   _e["cost"]))
     _NG2_ADJ[_e["to"]  ].append((_e["from"], _e["cost"]))
     if _e.get("type") == "ELEVATOR":
         _NG2_ELEV_NODES.add(_e["from"])
         _NG2_ELEV_NODES.add(_e["to"])
+    if _e.get("type") in ("STAIR", "ELEVATOR") and "CONN-" in _e["from"] and "CONN-" in _e["to"]:
+        _CONN_FLOOR_CHANGE_PAIRS.add((_e["from"], _e["to"]))
+        _CONN_FLOOR_CHANGE_PAIRS.add((_e["to"], _e["from"]))
 
 # Auto-generate CROSS_BLD edges between CONNECTION nodes across buildings (in-memory only)
 _existing_ng2_edges: set = set()
@@ -961,12 +965,17 @@ def _snap_to_grid(room_id: str) -> list[str]:
     return [candidates[0][0]] if candidates else []
 
 
+_B21_F2_ALLOWED_STAIRS: set = {"S-21-F2-21134", "S-21-F3-21234"}
+
 def _dijkstra_ng2(from_room: str, to_room: str):
     """Dijkstra on nav_graph2 with virtual source/sink for multi-door rooms."""
     src_nodes = _NG2_ROOMS.get(from_room) or _snap_to_grid(from_room)
     dst_nodes = _NG2_ROOMS.get(to_room)   or _snap_to_grid(to_room)
     if not src_nodes or not dst_nodes:
         return None
+
+    to_node = NODES.get(to_room, {})
+    force_central_stairs = (to_node.get("building") == "21" and int(to_node.get("floor", 0)) == 2)
 
     V_START = "__start__"
     V_END   = "__end__"
@@ -987,6 +996,13 @@ def _dijkstra_ng2(from_room: str, to_room: str):
         if u == V_END:
             break
         for v, w in list(_NG2_ADJ.get(u, [])) + extra.get(u, []):
+            if force_central_stairs:
+                vn = _NG2_NODES.get(v, {})
+                # Block all stairwells/elevators/CONN floor changes except 21134/21234
+                if vn.get("type") == "STAIR_LANDING" and v not in _B21_F2_ALLOWED_STAIRS:
+                    continue
+                if (u, v) in _CONN_FLOOR_CHANGE_PAIRS:
+                    continue
             nd = d + w
             if nd < dist.get(v, float("inf")):
                 dist[v] = nd
