@@ -583,6 +583,12 @@ _B21_F2_STEP5: dict = {
     "21208": "After the stairs, turn left and continue straight all the way until you reach Room 21208. Appropriate signage will appear above the door.",
 }
 
+_B22_F2_ROOMS: set = {
+    "22004", "22150", "22151", "22201", "22202", "22203", "22204",
+    "22205", "22206", "22207", "22208", "22210", "22221", "22222",
+    "22226", "22227",
+}
+
 def _manual_route_steps(from_room: str, to_room: str):
     if from_room == "22301" and to_room in _B21_F2_ROOMS:
         step5_text = _B21_F2_STEP5.get(to_room, f"Turn left and go straight to Room {to_room}. Appropriate signage will appear above the door.")
@@ -592,6 +598,14 @@ def _manual_route_steps(from_room: str, to_room: str):
             {"text": "Take the stairs near the entrance to the Management Department", "type": "stairs", "room": None, "floor": 2},
             {"text": "There is a cooler and restrooms on your right and a seating area with tables on your left", "type": "walk", "room": None, "floor": 2},
             {"text": step5_text, "type": "arrived", "room": to_room, "floor": 2},
+        ]
+    if from_room == "22301" and to_room in _B22_F2_ROOMS:
+        return [
+            {"text": "You are at Cafe Vitamin", "type": "start", "room": "22301", "floor": 3},
+            {"text": "Turn right and go to the Economics Department", "type": "walk", "room": None, "floor": 3},
+            {"text": "Take the stairs near the entrance to the Economics Department", "type": "stairs", "room": None, "floor": 2},
+            {"text": "There is a cooler and restrooms on your right and a seating area with tables on your left", "type": "walk", "room": None, "floor": 2},
+            {"text": f"Turn left and go straight to Room {to_room}. Appropriate signage will appear above the door.", "type": "arrived", "room": to_room, "floor": 2},
         ]
     return None
 
