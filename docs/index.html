@@ -1180,7 +1180,13 @@ function setAuthState(isAuthed) {
     const wallsB22 = (data.walls_b22 || []).map(w => ({
       start: [w.start[0]+B22_DX, w.start[1]+B22_DY],
       end:   [w.end[0]+B22_DX,   w.end[1]+B22_DY]
-    }));
+    })).filter(w => {
+      // Hide staircase/elevator structure near Vitamin top-left
+      const xs = [w.start[0], w.end[0]], ys = [w.start[1], w.end[1]];
+      const inX = Math.max(...xs) < 230 && Math.min(...xs) > -170;
+      const inY = Math.max(...ys) < 4490 && Math.min(...ys) > 4340;
+      return !(inX && inY);
+    });
     const walls = [...wallsB21, ...wallsB22];
 
     // Horizontal flip: DXF X-axis is mirrored relative to the real building layout.
@@ -1195,6 +1201,11 @@ function setAuthState(isAuthed) {
       const s = line.start || [0,0], e = line.end || [0,0];
       return `<line x1="${s[0]}" y1="${s[1]}" x2="${e[0]}" y2="${e[1]}"/>`;
     }).join('') + `</g>`;
+
+    // Cover internal wall structure near Vitamin (22301) — drawn after walls, before route
+    if(Number(floor) === 3){
+      html += `<rect x="${200+B22_DX}" y="${4200+B22_DY}" width="800" height="400" fill="#f8fbfb"/>`;
+    }
 
     const pts = routePointsForFloor(floor);
     if(pts.length > 1){
