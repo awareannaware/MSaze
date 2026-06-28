@@ -589,7 +589,22 @@ _B22_F2_ROOMS: set = {
     "22226", "22227",
 }
 
+MANUAL_ROUTE_STEPS: dict = {
+    ("22301", "21405"): [
+        {"text": "You are at Cafe Vitamin", "type": "start", "room": "22301", "floor": 3},
+        {"text": "Turn left and go to the Management Department", "type": "walk", "room": None, "floor": 3},
+        {"text": "Enter the Management Department through the sliding door", "type": "walk", "room": None, "floor": 3},
+        {"text": "Turn right to the elevator", "type": "walk", "room": None, "floor": 3},
+        {"text": "Take the elevator up to Floor 4", "type": "elevator", "room": None, "floor": 4},
+        {"text": "Go to Building 21 — it's on your left side", "type": "walk", "room": None, "floor": 4},
+        {"text": "Continue straight, passing rooms 21402, 21403, 21404", "type": "walk", "room": None, "floor": 4},
+        {"text": "You have arrived at Room 21405 (Office)", "type": "arrived", "room": "21405", "floor": 4},
+    ],
+}
+
 def _manual_route_steps(from_room: str, to_room: str):
+    if (from_room, to_room) in MANUAL_ROUTE_STEPS:
+        return MANUAL_ROUTE_STEPS[(from_room, to_room)]
     if from_room == "22301" and to_room in _B21_F2_ROOMS:
         step5_text = _B21_F2_STEP5.get(to_room, f"Turn left and go straight to Room {to_room}. Appropriate signage will appear above the door.")
         return [

@@ -924,7 +924,7 @@ document.getElementById('search').addEventListener('focus', function(){ this.val
 function hideSuggestions(){document.getElementById('suggestions').style.display='none'}
 viewport.addEventListener('wheel',e=>{e.preventDefault(); const rect=viewport.getBoundingClientRect(); const mx=e.clientX-rect.left, my=e.clientY-rect.top; const prev=scale; scale=Math.max(0.08,Math.min(1.2,scale*(e.deltaY<0?1.12:.88))); x=mx-(mx-x)*(scale/prev); y=my-(my-y)*(scale/prev); setTransform();},{passive:false});
 viewport.addEventListener('pointerdown',e=>{dragging=true; sx=e.clientX; sy=e.clientY; ox=x; oy=y; viewport.setPointerCapture(e.pointerId)}); viewport.addEventListener('pointermove',e=>{if(!dragging)return; x=ox+e.clientX-sx; y=oy+e.clientY-sy; setTransform()}); viewport.addEventListener('pointerup',()=>dragging=false);
-document.getElementById('plus').onclick=()=>{scale*=1.15; setTransform()}; document.getElementById('minus').onclick=()=>{scale*=.85; setTransform()}; document.getElementById('reset').onclick=fitFloor; document.querySelectorAll('.floor-tab').forEach(b=>b.onclick=()=>setFloor(b.dataset.floor)); document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>routeTo(b.dataset.q)); document.getElementById('search').addEventListener('input',showSuggestions); document.getElementById('search').addEventListener('focus',showSuggestions); document.getElementById('startBtn').onclick=()=>routeTo(document.getElementById('search').value||'Elevator'); window.addEventListener('resize',fitFloor);
+document.getElementById('plus').onclick=()=>{scale*=1.15; setTransform()}; document.getElementById('minus').onclick=()=>{scale*=.85; setTransform()}; document.getElementById('reset').onclick=fitFloor; document.querySelectorAll('.floor-tab').forEach(b=>b.onclick=()=>setFloor(b.dataset.floor)); document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>routeTo(b.dataset.q)); document.getElementById('startBtn').onclick=()=>routeTo(document.getElementById('search').value||'Elevator'); window.addEventListener('resize',fitFloor);
 // routeTo removed — no pre-set destination
 
 // Smooth scrolling for top navigation and CTA links
@@ -1030,10 +1030,9 @@ function setAuthState(isAuthed) {
     });
   }
   if (typeof routeTo === 'function') {
-    const originalRouteTo = routeTo;
     routeTo = function(q) {
       logEvent('route_request', { query: q || '' });
-      return originalRouteTo(q);
+      if (typeof window.routeTo === 'function') return window.routeTo(q);
     };
   }
 })();
