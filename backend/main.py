@@ -590,6 +590,16 @@ _B22_F2_ROOMS: set = {
 }
 
 MANUAL_ROUTE_STEPS: dict = {
+    ("22301", "21504"): [
+        {"text": "You are at Cafe Vitamin", "type": "start", "room": "22301", "floor": 3},
+        {"text": "Turn left and go to the Management Department", "type": "walk", "room": None, "floor": 3},
+        {"text": "Enter the Management Department through the sliding door", "type": "walk", "room": None, "floor": 3},
+        {"text": "Turn right to the elevator", "type": "walk", "room": None, "floor": 3},
+        {"text": "Take the elevator up to Floor 5", "type": "elevator", "room": None, "floor": 5},
+        {"text": "Go to Building 21 — it's on your left side", "type": "walk", "room": None, "floor": 5},
+        {"text": "Continue straight, passing rooms 21501, 21502, 21503", "type": "walk", "room": None, "floor": 5},
+        {"text": "Room 21504 is on your right (Researchers Room)", "type": "arrived", "room": "21504", "floor": 5},
+    ],
     ("22301", "21405"): [
         {"text": "You are at Cafe Vitamin", "type": "start", "room": "22301", "floor": 3},
         {"text": "Turn left and go to the Management Department", "type": "walk", "room": None, "floor": 3},
