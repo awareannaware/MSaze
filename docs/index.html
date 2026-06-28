@@ -1211,6 +1211,14 @@ function setAuthState(isAuthed) {
       const vx = 265, vy = 4484;
       html += `<rect x="${vx-170}" y="${vy+56}" width="340" height="130" rx="20" fill="#c27c3a" opacity=".9"/>`;
       html += `<text x="${vx}" y="${vy+141}" transform="${flipTxt(vx)}" text-anchor="middle" font-size="90" font-weight="900" fill="#fff">Vitamin</text>`;
+      // Management Department label (B21 F3)
+      const mx = 1985.7, my = 3463.7;
+      html += `<rect x="${mx-370}" y="${my-120}" width="740" height="140" rx="20" fill="#0f766e" opacity=".85"/>`;
+      html += `<text x="${mx}" y="${my-10}" transform="${flipTxt(mx)}" text-anchor="middle" font-size="80" font-weight="900" fill="#fff">Management Dept</text>`;
+      // Economics Department label (B22 F3, apply B22 offset)
+      const ex = -1046.7 + B22_DX, ey = 3493.1 + B22_DY;
+      html += `<rect x="${ex-370}" y="${ey-120}" width="740" height="140" rx="20" fill="#0f766e" opacity=".85"/>`;
+      html += `<text x="${ex}" y="${ey-10}" transform="${flipTxt(ex)}" text-anchor="middle" font-size="80" font-weight="900" fill="#fff">Economics Dept</text>`;
     }
 
     html += `</g>`; // end flip group
